@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="joke.hfad.com.miudelar.InscripcionACarrera">
+
+    <TextView
+        android:id="@+id/descripcion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Aquí podrás inscribirte a las carreras que figuran en el listado. Una vez que selecciones la carrera, deberás presionar el botón CONFIRMAR INSCRIPCIÓN"
+        tools:layout_editor_absoluteY="9dp"
+        android:layout_marginRight="8dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:padding="18dp"
+        android:layout_alignParentEnd="true"
+        android:textSize="16dp" />
+
+    <TextView
+        android:id="@+id/tituloListaCarreras"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Carreras"
+        tools:layout_editor_absoluteX="63dp"
+        tools:layout_editor_absoluteY="134dp"
+        android:textSize="20dp"
+        android:layout_above="@+id/carreras"
+        android:layout_centerHorizontal="true" />
+
+    <Spinner
+        android:id="@+id/carreras"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="160dp"
+        tools:layout_editor_absoluteX="63dp"
+        android:padding="18dp"
+        android:spinnerMode="dropdown"
+        android:layout_above="@+id/botonConfirmar"
+        android:layout_centerHorizontal="true"
+        android:theme="@style/spinnerTheme" />
+
+    <Button
+        android:id="@+id/botonConfirmar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirmar inscripción"
+        tools:layout_editor_absoluteX="96dp"
+        tools:layout_editor_absoluteY="197dp"
+        android:background="@color/colorPrimary"
+        android:textColor="#ffffff"
+        android:padding="10dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="onClickConfirmar" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

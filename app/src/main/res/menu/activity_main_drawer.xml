@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Inscripciones" >
+    <menu>
+        <item
+            android:id="@+id/nav_camera"
+            android:icon="@drawable/ic_school_black_24dp"
+            android:title="Inscripción a carrera" />
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/ic_content_paste_black_24dp"
+            android:title="Inscripción a curso" />
+        <item
+            android:id="@+id/nav_slideshow"
+            android:icon="@drawable/ic_border_color_black_24dp"
+            android:title="Inscripción a exámen" />
+    </menu>
+    </item>
+
+</menu>

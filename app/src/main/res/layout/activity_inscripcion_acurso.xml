@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InscripcionACurso">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="377dp"
+        android:layout_height="72dp"
+        android:text="En esta pagina podras inscribirte a diversos cursos para la carrera seleccionada"
+        android:padding="18dp" />
+
+    <TextView
+        android:id="@+id/textoCarreras"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Carreras"
+        android:paddingLeft="18dp"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentStart="true"
+        android:textSize="20dp" />
+
+    <Spinner
+        android:id="@+id/carreras"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_below="@+id/textoCursos"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/textoCursos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cursos"
+
+        android:paddingLeft="18dp"
+        android:layout_below="@+id/asignaturas"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="26dp"
+        android:textSize="20dp" />
+
+    <Spinner
+        android:id="@+id/asignaturas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_below="@+id/textoCarreras"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirmar inscripción"
+
+        android:textColor="#ffffff"
+        android:padding="10dp"
+        android:background="@color/colorPrimary"
+        android:layout_below="@+id/carreras"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

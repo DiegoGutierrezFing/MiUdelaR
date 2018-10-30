@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">MiUdelar - Gestion del estudiante</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Ayuda</string>
+    <string name="title_activity_login">Iniciar Sesión en MiUdelaR</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_userID">Usuario</string>
+    <string name="prompt_password">Contraseña</string>
+    <string name="action_sign_in">Ingresar</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_user_id">Este usuario es invalido</string>
+    <string name="error_invalid_password">Contraseña invalida</string>
+    <string name="error_incorrect_password">La contraseña es incorrecta</string>
+    <string name="error_field_required">Este campo es requerido</string>
+
+    <string name="error_server">Error en el servidor</string>
+    <string name="error_incorrect_user_id">Usuario no registrado</string>
+    <string name="error_network">Conexión de red no disponible</string>
+    <string name="title_activity_main2">Main2Activity</string>
+</resources>
