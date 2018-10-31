@@ -16,6 +16,7 @@ public class SessionPrefs {
 
     public static final String PREFS_NAME = "MIUDELAR_PREFS";
     public static final String PREF_USER_TOKEN = "PREF_USER_TOKEN";
+    public static final String PREF_USERNAME = "PREF_USERNAME";
 
     private SharedPreferences mPrefs;
 
@@ -41,10 +42,11 @@ public class SessionPrefs {
         return mIsLoggedIn;
     }
 
-    public void guardarToken(String token) {
+    public void guardarToken(String token, String username) {
         if (token != null) {
             SharedPreferences.Editor editor = mPrefs.edit();
             editor.putString(PREF_USER_TOKEN, token);
+            editor.putString(PREF_USERNAME, username);
             //Log.i("guardando token: ", token);
             editor.apply();
             mIsLoggedIn = true;
@@ -56,11 +58,12 @@ public class SessionPrefs {
         mIsLoggedIn = false;
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(PREF_USER_TOKEN, null);
+        editor.putString(PREF_USERNAME, null);
         editor.apply();
     }
 
     private void timeout(){
-        new CountDownTimer(30000, 1000) {
+        new CountDownTimer(60000, 1000) {
 
             public void onTick(long millisUntilFinished) {
 

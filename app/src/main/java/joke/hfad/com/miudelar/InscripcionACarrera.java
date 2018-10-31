@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import joke.hfad.com.miudelar.data.api.model.DtCarrera;
+import joke.hfad.com.miudelar.data.api.model.InscripcionCarreraBody;
 import joke.hfad.com.miudelar.data.prefs.SessionPrefs;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,7 +29,11 @@ public class InscripcionACarrera extends AppCompatActivity {
     private TextView descripcion;
     private TextView tituloListaCarreras;
     private Button botonConfirmar;
+
     private String authorization;
+    private String contentType;
+    private String usuario;
+
     private ApiInterface apiService;
 
     @Override
@@ -58,6 +63,8 @@ public class InscripcionACarrera extends AppCompatActivity {
         apiService = ApiClient.getClient().create(ApiInterface.class);
 
         authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
+        usuario = getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USERNAME, null);
+        contentType = "application/json";
 
         //Toast.makeText(this, authorization, Toast.LENGTH_SHORT).show();
 
@@ -72,7 +79,7 @@ public class InscripcionACarrera extends AppCompatActivity {
                 carreras = response.body();
                 //recyclerView.setAdapter(new AlbumsAdapter(albums, R.layout.list_item_album, getApplicationContext()));
 
-                List<String> listaCarreras = new ArrayList<String>();
+                //List<String> listaCarreras = new ArrayList<String>();
 
                 /*
                 for (DtCarrera c : carreras){
@@ -87,6 +94,8 @@ public class InscripcionACarrera extends AppCompatActivity {
                 spinnerCarreras.setAdapter(adapter);
             }
 
+
+
             @Override
             public void onFailure(Call<List<DtCarrera>> call, Throwable t) {
                 // Log error here since request failed
@@ -94,6 +103,12 @@ public class InscripcionACarrera extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se realizaba la peticion", Toast.LENGTH_LONG).show();
             }
         });
+
+        /*if(spinnerCarreras != null && spinnerCarreras.getSelectedItem() !=null ) {
+            Toast.makeText(InscripcionACarrera.this, ((DtCarrera) spinnerCarreras.getSelectedItem()).toString(), Toast.LENGTH_SHORT).show();
+        } else  {
+            Toast.makeText(InscripcionACarrera.this, "No se han cargado elementos en la lista de carreras", Toast.LENGTH_SHORT).show();
+        }*/
     }
 
     private void showProgress(boolean show) {
@@ -106,65 +121,78 @@ public class InscripcionACarrera extends AppCompatActivity {
     }
 
     public void onClickConfirmar(View view){
-        DtCarrera dtCarrera = (DtCarrera) spinnerCarreras.getSelectedItem();
-        Toast.makeText(InscripcionACarrera.this, dtCarrera.toString(), Toast.LENGTH_SHORT);
 
-        apiService = ApiClient.getClient().create(ApiInterface.class);
+        //Toast.makeText(InscripcionACarrera.this, "Se ha presionado el boton", Toast.LENGTH_SHORT).show();
 
-        authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
+        spinnerCarreras = (Spinner) findViewById(R.id.carreras);
 
-        String json = "{ \"cedula\" : " + "\"41975046\"" + ", \"codigo\" : \"" + Long.toString(dtCarrera.getCodigo()) + "\" }";
+        DtCarrera dtCarrera;
 
-        Call<String> c = apiService.inscripcionCarrera(authorization, json);
-        c.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if (response.isSuccessful()){
-                    if (response.body() != null){
+        if(spinnerCarreras != null && spinnerCarreras.getSelectedItem() !=null ) {
 
-                        //if (!(response.body().toString().contains("Error"))){
+            dtCarrera = (DtCarrera) spinnerCarreras.getSelectedItem();
+            Toast.makeText(InscripcionACarrera.this, "Carrera seleccionada: " + dtCarrera.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(InscripcionACarrera.this, "Realizando inscripción: Espere...", Toast.LENGTH_SHORT).show();
+
+            apiService = ApiClient.getClient().create(ApiInterface.class);
+
+            authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
+
+            Call<String> c = apiService.inscripcionCarrera(authorization, contentType, new InscripcionCarreraBody(usuario, dtCarrera.getCodigo()));
+            c.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response.isSuccessful()){
+                        if (response.body() != null){
+
+                            //if (!(response.body().toString().contains("Error"))){
                             // Mostrar mensaje de que se tuvo exito en la inscripcion
-                            Toast.makeText(InscripcionACarrera.this, response.body().toString(), Toast.LENGTH_SHORT);
+                            Toast.makeText(InscripcionACarrera.this, response.body().toString(), Toast.LENGTH_SHORT).show();
 
                             // Ir al menu principal (main activity)
                             irAMenuPrincipal();
-                        //}
+                            //}
 
-                    }else {
-                        Toast.makeText(InscripcionACarrera.this, "Error desconocido", Toast.LENGTH_SHORT);
+                        }else {
+                            Toast.makeText(InscripcionACarrera.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
+                    // Procesar errores
+                    if (!response.isSuccessful()) {
+                        //String error = response.body().toString();
+                        //    if (response.errorBody()
+                        //            .contentType()
+                        //            .subtype()
+                        //            .equals("json")) {
+                        //        ApiError apiError = ApiError.fromResponseBody(response.errorBody());
+
+                        //        error = apiError.getMessage();
+                        //        Log.d("LoginActivity", apiError.getDeveloperMessage());
+                        //    } else {
+                        //        try {
+                        //            // Reportar causas de error no relacionado con la API
+                        //            Log.d("LoginActivity", response.errorBody().string());
+                        //        } catch (IOException e) {
+                        //            e.printStackTrace();
+                        //        }
+                        //    }
+                        Toast.makeText(InscripcionACarrera.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
 
-                // Procesar errores
-                if (!response.isSuccessful()) {
-                    //String error = response.body().toString();
-                        /*if (response.errorBody()
-                                .contentType()
-                                .subtype()
-                                .equals("json")) {
-                            ApiError apiError = ApiError.fromResponseBody(response.errorBody());
-
-                            error = apiError.getMessage();
-                            Log.d("LoginActivity", apiError.getDeveloperMessage());
-                        } else {
-                            try {
-                                // Reportar causas de error no relacionado con la API
-                                Log.d("LoginActivity", response.errorBody().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }*/
-                    Toast.makeText(InscripcionACarrera.this, "Error desconocido", Toast.LENGTH_SHORT);
-                    return;
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Toast.makeText(InscripcionACarrera.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
                 }
-            }
+            });
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Toast.makeText(InscripcionACarrera.this, "No fue posible recibir respuesta del servidor", Toast.LENGTH_SHORT);
-            }
-        });
+
+        } else  {
+            Toast.makeText(InscripcionACarrera.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /*

@@ -120,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
         mFloatLabelPassword.setError(null);
 
         // Store values at the time of the login attempt.
-        String userId = mUserIdView.getText().toString();
+        final String userId = mUserIdView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -171,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             if (!(response.body().toString().contains("Error: Usuario o contraseña incorrecta"))){
                                 // Guardar token en preferencias
-                                SessionPrefs.get(LoginActivity.this).guardarToken(response.body().toString());
+                                SessionPrefs.get(LoginActivity.this).guardarToken(response.body().toString(), userId);
 
                                 // Ir al menu principal (main activity)
                                 irAMenuPrincipal();

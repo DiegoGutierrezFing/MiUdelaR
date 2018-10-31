@@ -3,6 +3,7 @@ package joke.hfad.com.miudelar;
 import java.util.List;
 
 import joke.hfad.com.miudelar.data.api.model.DtCarrera;
+import joke.hfad.com.miudelar.data.api.model.InscripcionCarreraBody;
 import joke.hfad.com.miudelar.data.api.model.LoginBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -34,15 +35,12 @@ public interface ApiInterface {
     public Call<List<DtCarrera>> getAllCarreras(@Header("Authorization") String authorization);
 
     @POST("estudiante/inscripcionCarrera/")
-    public Call<String> inscripcionCarrera(@Header("Authorization") String authorization, @Body String inscripcionCarreraDatos);
+    public Call<String> inscripcionCarrera(@Header("Authorization") String authorization, @Header("Content-Type") String contentType, @Body InscripcionCarreraBody inscripcionCarreraBody);
 
     @POST("estudiante/inscripcionCurso/")
-    public Call<String> inscripcionCurso(@Header("Authorization") String authorization, @Body String inscripcionCursoDatos);
+    public Call<String> inscripcionCurso(@Header("Authorization") String authorization, @Header("Content-Type") String contentType, @Body String inscripcionCursoDatos);
 
     @POST("estudiante/inscripcionExamen/")
-    public Call<String> inscripcionExamen(@Header("Authorization") String authorization, @Body String inscripcionExamenDatos);
+    public Call<String> inscripcionExamen(@Header("Authorization") String authorization, @Header("Content-Type") String contentType, @Body String inscripcionExamenDatos);
 
-
-    /*@POST("/albums")
-    public Call<Album> albumData(@Body Album data);*/
 }
