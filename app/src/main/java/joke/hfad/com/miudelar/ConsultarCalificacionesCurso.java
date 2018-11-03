@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import joke.hfad.com.miudelar.data.api.model.DtAsignatura;
+import joke.hfad.com.miudelar.data.api.model.DtCalificaciones;
 import joke.hfad.com.miudelar.data.api.model.DtCurso;
 import joke.hfad.com.miudelar.data.api.model.InscripcionCursoBody;
 import joke.hfad.com.miudelar.data.prefs.SessionPrefs;
@@ -24,7 +25,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class InscripcionACurso extends AppCompatActivity {
+public class ConsultarCalificacionesCurso extends AppCompatActivity {
 
     private View mProgressView;
     private Spinner spinnerCursos;
@@ -37,8 +38,12 @@ public class InscripcionACurso extends AppCompatActivity {
     private String usuario;
 
     private ApiInterface apiService;
-    List<DtAsignatura> asignaturas;
-    List<DtCurso> cursos;
+
+    private List<DtAsignatura> asignaturas;
+    private List<DtCurso> cursos;
+
+    private DtCurso dtCurso;
+    private DtCalificaciones dtCalificaciones;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +85,7 @@ public class InscripcionACurso extends AppCompatActivity {
 
                 cursos = response.body();
 
-                ArrayAdapter<DtCurso> adapter = new MiAdaptador(InscripcionACurso.this, R.layout.curso_item, cursos);
+                ArrayAdapter<DtCurso> adapter = new MiAdaptador(ConsultarCalificacionesCurso.this, R.layout.curso_item, cursos);
 
                 adapter.setDropDownViewResource(R.layout.curso_item);
 
@@ -101,35 +106,37 @@ public class InscripcionACurso extends AppCompatActivity {
 
         spinnerCursos = (Spinner) findViewById(R.id.cursos);
 
-        DtCurso dtCurso;
+        //DtCurso dtCurso;
 
         if(spinnerCursos != null && spinnerCursos.getSelectedItem() !=null ) {
 
             dtCurso= (DtCurso) spinnerCursos.getSelectedItem();
 
-            Toast.makeText(InscripcionACurso.this, "Curso seleccionado: " + dtCurso.getId(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(InscripcionACurso.this, "Realizando inscripción: Espere...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ConsultarCalificacionesCurso.this, "Curso seleccionado: " + dtCurso.getId(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(ConsultarCalificacionesCurso.this, "Realizando consulta: Espere...", Toast.LENGTH_SHORT).show();
 
             apiService = ApiClient.getClient().create(ApiInterface.class);
 
             authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
 
-            Call<String> c = apiService.inscripcionCurso(authorization, contentType, new InscripcionCursoBody(usuario, dtCurso.getId()));
-            c.enqueue(new Callback<String>() {
+            Call<DtCalificaciones> c = apiService.getCalificaciones(authorization, usuario, dtCurso.getAsignatura_Carrera().getId());
+            c.enqueue(new Callback<DtCalificaciones>() {
                 @Override
-                public void onResponse(Call<String> call, Response<String> response) {
+                public void onResponse(Call<DtCalificaciones> call, Response<DtCalificaciones> response) {
                     if (response.isSuccessful()){
                         if (response.body() != null){
 
                             //if (!(response.body().toString().contains("Error"))){
                             // Mostrar mensaje de que se tuvo exito en la inscripcion
-                            Toast.makeText(InscripcionACurso.this, response.body().toString(), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(ConsultarCalificacionesCurso.this, response.body().toString(), Toast.LENGTH_SHORT).show();
 
-                            // Ir al menu principal (main activity)
-                            irAMenuPrincipal();
+                            dtCalificaciones = response.body();
+
+                            // Ir a la actividad de resultados (resultadoCursos activity)
+                            irAResultadosCursos();
 
                         }else {
-                            Toast.makeText(InscripcionACurso.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ConsultarCalificacionesCurso.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }
@@ -137,19 +144,19 @@ public class InscripcionACurso extends AppCompatActivity {
                     // Procesar errores
                     if (!response.isSuccessful()) {
 
-                        Toast.makeText(InscripcionACurso.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ConsultarCalificacionesCurso.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
 
                 @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                    Toast.makeText(InscripcionACurso.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
+                public void onFailure(Call<DtCalificaciones> call, Throwable t) {
+                    Toast.makeText(ConsultarCalificacionesCurso.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
                 }
             });
 
         } else  {
-            Toast.makeText(InscripcionACurso.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ConsultarCalificacionesCurso.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -163,6 +170,14 @@ public class InscripcionACurso extends AppCompatActivity {
     }
 
     private void irAMenuPrincipal() {
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
+    }
+
+    private void irAResultadosCursos() {
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("RESULTADOS_CURSOS", dtCalificaciones);
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }

@@ -6,7 +6,9 @@ package joke.hfad.com.miudelar.data.api.model;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class DtUsuario implements Serializable {
 
     private String cedula;

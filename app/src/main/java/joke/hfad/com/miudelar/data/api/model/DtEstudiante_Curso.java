@@ -17,6 +17,12 @@ public class DtEstudiante_Curso implements Serializable {
     public DtEstudiante_Curso() {
     }
 
+    public DtEstudiante_Curso(Long calificacion, DtUsuario usuario, DtCurso curso) {
+        this.calificacion = calificacion;
+        this.usuario = usuario;
+        this.curso = curso;
+    }
+    
      public Long getCalificacion() {
         return this.calificacion;
     }

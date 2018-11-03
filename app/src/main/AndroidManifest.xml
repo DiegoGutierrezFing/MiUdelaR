@@ -15,6 +15,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -25,6 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".InscripcionACurso"
             android:label="Inscripcion a curso">
@@ -32,6 +34,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
         <activity
             android:name=".InscripcionACarrera"
             android:label="Inscripcion a carrera">
@@ -39,9 +42,34 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
+        <activity
+            android:name=".InscripcionAExamen"
+            android:label="Inscripcion a examen">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
+        <activity
+            android:name=".ConsultarCalificacionesCurso"
+            android:label="Consultar calificaciones">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
+
+        <activity
+            android:name=".ResultadoCursos"
+            android:label="Consultar calificaciones">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ConsultarCalificacionesCurso" />
+        </activity>
     </application>
 
 </manifest>

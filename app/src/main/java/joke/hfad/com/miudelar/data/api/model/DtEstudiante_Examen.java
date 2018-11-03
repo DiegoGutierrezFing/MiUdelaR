@@ -14,8 +14,10 @@ public class DtEstudiante_Examen implements Serializable {
 
     private DtUsuario usuario;
 
-    public DtEstudiante_Examen(Long id, Long calificacion) {
+    public DtEstudiante_Examen(Long calificacion, DtExamen examen, DtUsuario usuario) {
         this.calificacion = calificacion;
+        this.examen = examen;
+        this.usuario = usuario;
     }
 
     public DtEstudiante_Examen() {

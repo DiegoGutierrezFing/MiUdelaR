@@ -16,8 +16,7 @@ public class DtPeriodo_Examen implements Serializable {
 
     private String fechaFin;
 
-    public DtPeriodo_Examen(Long id, String tipo, String fechaInicio, String fechaFin) {
-        this.id = id;
+    public DtPeriodo_Examen(String tipo, String fechaInicio, String fechaFin) {
         this.tipo = tipo;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;

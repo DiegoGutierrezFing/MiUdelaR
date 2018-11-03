@@ -9,17 +9,26 @@ import java.util.Objects;
 public class DtHorario implements Serializable {
 
     private Long id;
+    
+    private DiaSemana dia;
 
     private int horaInicio;
 
     private int horaFin;
 
-    public DtHorario(Long id, int horaInicio, int horaFin) {
-        this.id = id;
+    public DtHorario(DiaSemana dia, int horaInicio, int horaFin) {
+        this.dia = dia;
         this.horaInicio = horaInicio;
         this.horaFin = horaFin;
     }
 
+    public DtHorario(Long id, DiaSemana dia, int horaInicio, int horaFin) {
+        this.id = id;
+        this.dia = dia;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaFin;
+    }
+    
     public DtHorario() {
     }
 
@@ -47,6 +56,14 @@ public class DtHorario implements Serializable {
         this.horaFin = horaFin;
     }
 
+    public DiaSemana getDia() {
+        return dia;
+    }
+
+    public void setDia(DiaSemana dia) {
+        this.dia = dia;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;

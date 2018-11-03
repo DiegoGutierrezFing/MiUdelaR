@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".InscripcionACurso">
+    android:fitsSystemWindows="true"
+    tools:context=".InscripcionAExamen">
 
     <TextView
         android:id="@+id/descripcion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Aquí podrás inscribirte a los cursos para las carreras en las que estás inscripto. Una vez que selecciones el curso, deberás presionar el botón CONFIRMAR INSCRIPCIÓN"
+        android:text="Aquí podrás inscribirte a los examenes para las carreras en las cuales estas inscripto. Una vez que selecciones el curso, deberás presionar el botón CONFIRMAR INSCRIPCIÓN"
         tools:layout_editor_absoluteY="9dp"
         android:layout_marginRight="8dp"
         android:layout_alignParentTop="true"
@@ -20,22 +21,22 @@
         android:textSize="16dp" />
 
     <TextView
-        android:id="@+id/tituloListaCursos"
+        android:id="@+id/tituloListaExamenes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cursos"
+        android:text="Examenes"
         android:textSize="20dp"
         android:layout_below="@+id/descripcion"
         android:layout_centerHorizontal="true" />
 
     <Spinner
-        android:id="@+id/cursos"
+        android:id="@+id/examenes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="18dp"
         android:spinnerMode="dropdown"
         android:theme="@style/spinnerTheme"
-        android:layout_below="@+id/tituloListaCursos"
+        android:layout_below="@+id/tituloListaExamenes"
         android:layout_alignParentStart="true" />
 
     <Button
@@ -49,7 +50,7 @@
         android:textColor="#ffffff"
         android:padding="10dp"
         android:onClick="onClickConfirmar"
-        android:layout_below="@+id/cursos"
+        android:layout_below="@+id/examenes"
         android:layout_centerHorizontal="true" />
 
     <ProgressBar

@@ -5,7 +5,9 @@ package joke.hfad.com.miudelar.data.api.model;
 
 import java.io.Serializable;
 import java.util.Objects;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class DtRol implements Serializable {
 
     private Long id;

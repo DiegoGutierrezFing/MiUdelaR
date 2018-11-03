@@ -3,6 +3,7 @@
  */
 package joke.hfad.com.miudelar.data.api.model;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,6 +26,13 @@ public class DtAsignatura_Carrera implements Serializable {
 
     public DtAsignatura_Carrera(Long id) {
         this.id = id;
+    }
+    
+    public DtAsignatura_Carrera(Long id, DtCarrera carrera, DtAsignatura asignatura) {
+        this.id = id;
+        this.carrera = carrera;
+        this.asignatura = asignatura;
+        this.previas = new ArrayList<>();
     }
 
     public DtAsignatura_Carrera() {

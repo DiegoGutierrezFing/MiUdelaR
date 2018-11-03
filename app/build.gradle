@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion '28.0.1'
     defaultConfig {
-        applicationId "joke.hfad.com.myapplication"
+        applicationId 'com.miudelar'
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1

@@ -14,6 +14,7 @@ public class ApiClient {
     public static final String BASE_URL = "http://tsi-diego.eastus.cloudapp.azure.com:8080/miudelar-server/";
     private static Retrofit retrofit = null;
 
+    // Implementar patron singleton
     public static Retrofit getClient() {
         if (retrofit==null) {
                 retrofit = new Retrofit.Builder()

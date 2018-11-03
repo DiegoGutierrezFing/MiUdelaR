@@ -18,18 +18,20 @@ import java.util.List;
 
 import joke.hfad.com.miudelar.data.api.model.DtAsignatura;
 import joke.hfad.com.miudelar.data.api.model.DtCurso;
+import joke.hfad.com.miudelar.data.api.model.DtExamen;
 import joke.hfad.com.miudelar.data.api.model.InscripcionCursoBody;
+import joke.hfad.com.miudelar.data.api.model.InscripcionExamenBody;
 import joke.hfad.com.miudelar.data.prefs.SessionPrefs;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class InscripcionACurso extends AppCompatActivity {
+public class InscripcionAExamen extends AppCompatActivity {
 
     private View mProgressView;
-    private Spinner spinnerCursos;
+    private Spinner spinnerExamenes;
     private TextView descripcion;
-    private TextView tituloListaCursos;
+    private TextView tituloListaExamenes;
     private Button botonConfirmar;
 
     private String authorization;
@@ -38,7 +40,7 @@ public class InscripcionACurso extends AppCompatActivity {
 
     private ApiInterface apiService;
     List<DtAsignatura> asignaturas;
-    List<DtCurso> cursos;
+    List<DtExamen> examenes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +57,8 @@ public class InscripcionACurso extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        tituloListaCursos = (TextView) findViewById(R.id.tituloListaCursos);
+        spinnerExamenes = (Spinner) findViewById(R.id.examenes);
+        tituloListaExamenes = (TextView) findViewById(R.id.tituloListaExamenes);
         descripcion = (TextView) findViewById(R.id.descripcion);
         botonConfirmar = (Button) findViewById(R.id.botonConfirmar);
         mProgressView = findViewById(R.id.progressBar);
@@ -69,28 +72,28 @@ public class InscripcionACurso extends AppCompatActivity {
         contentType = "application/json";
 
         asignaturas = new ArrayList<DtAsignatura>();
-        cursos = new ArrayList<DtCurso>();
+        examenes = new ArrayList<DtExamen>();
 
-        //Realizar peticion al servidor de MiUdelaR y llenar el Spinner de Cursos con elementos
-        Call<List<DtCurso>> callDtCurso = apiService.getCursosByCedula(authorization, usuario);
-        callDtCurso.enqueue(new Callback<List<DtCurso>>() {
+        //Realizar peticion al servidor de MiUdelaR y llenar el Spinner de Examenes con elementos
+        Call<List<DtExamen>> callDtExamen = apiService.getExamenesByCedula(authorization, usuario);
+        callDtExamen.enqueue(new Callback<List<DtExamen>>() {
 
             @Override
-            public void onResponse(Call<List<DtCurso>> call, Response<List<DtCurso>> response) {
+            public void onResponse(Call<List<DtExamen>> call, Response<List<DtExamen>> response) {
 
-                cursos = response.body();
+                examenes = response.body();
 
-                ArrayAdapter<DtCurso> adapter = new MiAdaptador(InscripcionACurso.this, R.layout.curso_item, cursos);
+                ArrayAdapter<DtExamen> adapter = new MiAdaptador(InscripcionAExamen.this, R.layout.curso_item, examenes);
 
                 adapter.setDropDownViewResource(R.layout.curso_item);
 
-                spinnerCursos.setAdapter(adapter);
+                spinnerExamenes.setAdapter(adapter);
 
                 showProgress(false);
             }
 
             @Override
-            public void onFailure(Call<List<DtCurso>> call, Throwable t) {
+            public void onFailure(Call<List<DtExamen>> call, Throwable t) {
 
                 Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se realizaba la peticion", Toast.LENGTH_LONG).show();
             }
@@ -99,37 +102,36 @@ public class InscripcionACurso extends AppCompatActivity {
 
     public void onClickConfirmar(View view){
 
-        spinnerCursos = (Spinner) findViewById(R.id.cursos);
+        spinnerExamenes = (Spinner) findViewById(R.id.cursos);
 
-        DtCurso dtCurso;
+        DtExamen dtExamen;
 
-        if(spinnerCursos != null && spinnerCursos.getSelectedItem() !=null ) {
+        if(spinnerExamenes != null && spinnerExamenes.getSelectedItem() !=null ) {
 
-            dtCurso= (DtCurso) spinnerCursos.getSelectedItem();
+            dtExamen= (DtExamen) spinnerExamenes.getSelectedItem();
 
-            Toast.makeText(InscripcionACurso.this, "Curso seleccionado: " + dtCurso.getId(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(InscripcionACurso.this, "Realizando inscripción: Espere...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(InscripcionAExamen.this, "Examen seleccionado: " + dtExamen.getId(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(InscripcionAExamen.this, "Realizando inscripción: Espere...", Toast.LENGTH_SHORT).show();
 
             apiService = ApiClient.getClient().create(ApiInterface.class);
 
             authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
 
-            Call<String> c = apiService.inscripcionCurso(authorization, contentType, new InscripcionCursoBody(usuario, dtCurso.getId()));
+            Call<String> c = apiService.inscripcionExamen(authorization, contentType, new InscripcionExamenBody(usuario, dtExamen.getId()));
             c.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response.isSuccessful()){
                         if (response.body() != null){
 
-                            //if (!(response.body().toString().contains("Error"))){
                             // Mostrar mensaje de que se tuvo exito en la inscripcion
-                            Toast.makeText(InscripcionACurso.this, response.body().toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(InscripcionAExamen.this, response.body().toString(), Toast.LENGTH_SHORT).show();
 
                             // Ir al menu principal (main activity)
                             irAMenuPrincipal();
 
                         }else {
-                            Toast.makeText(InscripcionACurso.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(InscripcionAExamen.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }
@@ -137,19 +139,19 @@ public class InscripcionACurso extends AppCompatActivity {
                     // Procesar errores
                     if (!response.isSuccessful()) {
 
-                        Toast.makeText(InscripcionACurso.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(InscripcionAExamen.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    Toast.makeText(InscripcionACurso.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(InscripcionAExamen.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
                 }
             });
 
         } else  {
-            Toast.makeText(InscripcionACurso.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
+            Toast.makeText(InscripcionAExamen.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -157,7 +159,7 @@ public class InscripcionACurso extends AppCompatActivity {
         mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
 
         int visibility = show ? View.GONE : View.VISIBLE;
-        tituloListaCursos.setVisibility(visibility);
+        tituloListaExamenes.setVisibility(visibility);
         botonConfirmar.setVisibility(visibility);
         descripcion.setVisibility(visibility);
     }
@@ -167,13 +169,13 @@ public class InscripcionACurso extends AppCompatActivity {
         finish();
     }
 
-    private class MiAdaptador extends ArrayAdapter<DtCurso> {
+    private class MiAdaptador extends ArrayAdapter<DtExamen> {
 
-        List<DtCurso> cursos = new ArrayList<>();
+        List<DtExamen> examenes = new ArrayList<>();
 
-        public MiAdaptador(Context context, int resource, List<DtCurso> objects) {
+        public MiAdaptador(Context context, int resource, List<DtExamen> objects) {
             super(context, resource, objects);
-            cursos = objects;
+            examenes = objects;
         }
 
         public View getDropDownView(int position, View convertView,ViewGroup parent) {
@@ -193,13 +195,14 @@ public class InscripcionACurso extends AppCompatActivity {
 
             TextView idCurso = (TextView)row.findViewById(R.id.idCurso);
 
-            idCurso.setText(cursos.get(position).getId().toString());
+            idCurso.setText(examenes.get(position).getId().toString());
 
             TextView nombreAsignatura = (TextView)row.findViewById(R.id.nombreAsignatura);
 
-            nombreAsignatura.setText(cursos.get(position).getAsignatura_Carrera().getAsignatura().getNombre());
+            nombreAsignatura.setText(examenes.get(position).getAsignatura_Carrera().getAsignatura().getNombre());
 
             return row;
         }
     }
+
 }

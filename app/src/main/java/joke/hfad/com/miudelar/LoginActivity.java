@@ -1,43 +1,23 @@
 package joke.hfad.com.miudelar;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import joke.hfad.com.miudelar.data.api.model.LoginBody;
 import joke.hfad.com.miudelar.data.prefs.SessionPrefs;
@@ -45,12 +25,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.Response;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
     private Retrofit mRestAdapter;
-    private ApiInterface mSaludMockApi;
+    private ApiInterface restApi;
 
     // UI references.
     private ImageView mLogoView;
@@ -73,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
                 .build();*/
 
         // Crear conexión a la API
-        mSaludMockApi = mRestAdapter.create(ApiInterface.class);
+        restApi = mRestAdapter.create(ApiInterface.class);
 
         //mLogoView = (ImageView) findViewById(R.id.logo);
         mUserIdView = (EditText) findViewById(R.id.user_id);
@@ -121,12 +100,12 @@ public class LoginActivity extends AppCompatActivity {
 
         // Store values at the time of the login attempt.
         final String userId = mUserIdView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        final String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
+        // Verificar si el password es valido si el usuario ha ingresado alguno.
         if (TextUtils.isEmpty(password)) {
             mFloatLabelPassword.setError(getString(R.string.error_field_required));
             focusView = mFloatLabelPassword;
@@ -149,28 +128,29 @@ public class LoginActivity extends AppCompatActivity {
         }*/
 
         if (cancel) {
-            // Hubo un error; no intentar realizar login y enfocar el primer
-            // campo de formulario con un error.
+
+            // Hubo un error; no intentar realizar login y enfocar el primer campo de formulario con un error.
             focusView.requestFocus();
+
         } else {
+
             // Mostrar el indicador de carga y luego iniciar la petición asíncrona.
             showProgress(true);
 
-            Call<String> loginCall = mSaludMockApi.login(new LoginBody(userId, password));
+            Call<String> loginCall = restApi.login(new LoginBody(userId, password));
             loginCall.enqueue(new Callback<String>() {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
 
-                    // Mostrar progreso
+                    // Ocultar la barra de progreso
                     showProgress(false);
-
-                    //Log.i("Response", response.body().toString());
 
                     if (response.isSuccessful()){
                         if (response.body() != null){
 
                             if (!(response.body().toString().contains("Error: Usuario o contraseña incorrecta"))){
-                                // Guardar token en preferencias
+
+                                // Guardar token y userID en preferencias
                                 SessionPrefs.get(LoginActivity.this).guardarToken(response.body().toString(), userId);
 
                                 // Ir al menu principal (main activity)
@@ -181,45 +161,22 @@ public class LoginActivity extends AppCompatActivity {
                                 showLoginError(error);
                                 return;
                             }
-                            //Log.i("onSuccess", response.body().toString());
-                            //Toast.makeText(getApplicationContext(), "Token recibido: " + response.body().toString(), Toast.LENGTH_SHORT).show();
+
                         }else{
-                            //Log.i("onEmptyResponse", "Returned empty response");//Toast.makeText(getContext(),"Nothing returned",Toast.LENGTH_LONG).show();
+
                             String error = "Error: Usuario o contraseña incorrecta";
                             showLoginError(error);
                             return;
                         }
                     }
-
                     // Procesar errores
-                    if (!response.isSuccessful()) {
-                        String error = response.body().toString();
-                        /*if (response.errorBody()
-                                .contentType()
-                                .subtype()
-                                .equals("json")) {
-                            ApiError apiError = ApiError.fromResponseBody(response.errorBody());
+                    else {
 
-                            error = apiError.getMessage();
-                            Log.d("LoginActivity", apiError.getDeveloperMessage());
-                        } else {
-                            try {
-                                // Reportar causas de error no relacionado con la API
-                                Log.d("LoginActivity", response.errorBody().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }*/
+                        String error = response.body().toString();
 
                         showLoginError(error);
                         return;
                     }
-
-                    // Guardar token en preferencias
-                    //SessionPrefs.get(LoginActivity.this).guardarToken(response.body().toString());
-
-                    // Ir al menu principal (main activity)
-                    //irAMenuPrincipal();
                 }
 
                 @Override
@@ -232,7 +189,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isUserIdValid(String userId) {
-        return userId.length() < 10;
+        return true/*userId.length() < 10*/;
     }
 
     private boolean isPasswordValid(String password) {
@@ -256,6 +213,7 @@ public class LoginActivity extends AppCompatActivity {
         Toast.makeText(this, error, Toast.LENGTH_LONG).show();
     }
 
+    // Esta operacion verifica si hay conectividad
     private boolean isOnline() {
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);

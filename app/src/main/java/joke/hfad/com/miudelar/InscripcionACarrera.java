@@ -50,6 +50,8 @@ public class InscripcionACarrera extends AppCompatActivity {
 
         setContentView(R.layout.activity_inscripcion_acarrera);
 
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         spinnerCarreras = (Spinner) findViewById(R.id.carreras);
         tituloListaCarreras = (TextView) findViewById(R.id.tituloListaCarreras);
         descripcion = (TextView) findViewById(R.id.descripcion);
@@ -58,57 +60,37 @@ public class InscripcionACarrera extends AppCompatActivity {
 
         showProgress(true);
 
-        //recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         apiService = ApiClient.getClient().create(ApiInterface.class);
 
         authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
         usuario = getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USERNAME, null);
         contentType = "application/json";
 
-        //Toast.makeText(this, authorization, Toast.LENGTH_SHORT).show();
-
+        //Realizar peticion al servidor de MiUdelaR y llenar el Spinner de Carreras con elementos
         Call<List<DtCarrera>> c = apiService.getAllCarreras(authorization);
         c.enqueue(new Callback<List<DtCarrera>>() {
+
             @Override
             public void onResponse(Call<List<DtCarrera>> call, Response<List<DtCarrera>> response) {
 
-                showProgress(false);
-
                 List<DtCarrera> carreras = new ArrayList<DtCarrera>();
                 carreras = response.body();
-                //recyclerView.setAdapter(new AlbumsAdapter(albums, R.layout.list_item_album, getApplicationContext()));
-
-                //List<String> listaCarreras = new ArrayList<String>();
-
-                /*
-                for (DtCarrera c : carreras){
-                    listaCarreras.add(c.getCodigo() + " - " + c.getNombre());
-                }
-                */
 
                 ArrayAdapter<DtCarrera> adapter = new ArrayAdapter<DtCarrera>(InscripcionACarrera.this, android.R.layout.simple_spinner_item, carreras);
 
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                 spinnerCarreras.setAdapter(adapter);
+
+                showProgress(false);
             }
-
-
 
             @Override
             public void onFailure(Call<List<DtCarrera>> call, Throwable t) {
-                // Log error here since request failed
-                //Log.e(TAG, t.toString());
+
                 Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se realizaba la peticion", Toast.LENGTH_LONG).show();
             }
         });
-
-        /*if(spinnerCarreras != null && spinnerCarreras.getSelectedItem() !=null ) {
-            Toast.makeText(InscripcionACarrera.this, ((DtCarrera) spinnerCarreras.getSelectedItem()).toString(), Toast.LENGTH_SHORT).show();
-        } else  {
-            Toast.makeText(InscripcionACarrera.this, "No se han cargado elementos en la lista de carreras", Toast.LENGTH_SHORT).show();
-        }*/
     }
 
     private void showProgress(boolean show) {
@@ -122,8 +104,6 @@ public class InscripcionACarrera extends AppCompatActivity {
 
     public void onClickConfirmar(View view){
 
-        //Toast.makeText(InscripcionACarrera.this, "Se ha presionado el boton", Toast.LENGTH_SHORT).show();
-
         spinnerCarreras = (Spinner) findViewById(R.id.carreras);
 
         DtCarrera dtCarrera;
@@ -131,6 +111,7 @@ public class InscripcionACarrera extends AppCompatActivity {
         if(spinnerCarreras != null && spinnerCarreras.getSelectedItem() !=null ) {
 
             dtCarrera = (DtCarrera) spinnerCarreras.getSelectedItem();
+
             Toast.makeText(InscripcionACarrera.this, "Carrera seleccionada: " + dtCarrera.toString(), Toast.LENGTH_SHORT).show();
             Toast.makeText(InscripcionACarrera.this, "Realizando inscripción: Espere...", Toast.LENGTH_SHORT).show();
 
@@ -194,16 +175,6 @@ public class InscripcionACarrera extends AppCompatActivity {
             Toast.makeText(InscripcionACarrera.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
         }
     }
-
-    /*
-    private void showProgress(boolean show) {
-        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-
-        int visibility = show ? View.GONE : View.VISIBLE;
-        //mLogoView.setVisibility(visibility);
-        mLoginFormView.setVisibility(visibility);
-    }
-    */
 
     private void irAMenuPrincipal() {
         startActivity(new Intent(this, MainActivity.class));

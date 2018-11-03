@@ -26,6 +26,14 @@ public class DtExamen implements Serializable {
         this.fecha = fecha;
     }
 
+    public DtExamen(Long id, Date fecha, DtAsignatura_Carrera asignatura_Carrera) {
+        this.id = id;
+        this.fecha = fecha;
+        this.asignatura_Carrera = asignatura_Carrera;
+    }
+    
+    
+
     public DtExamen() {
     }
 

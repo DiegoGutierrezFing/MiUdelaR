@@ -29,10 +29,12 @@ public class DtCurso implements Serializable {
         this.asignatura_Carrera = asignatura_Carrera;
         this.horarios = horarios;
     }
-
-    public DtCurso() {
+    
+    public DtCurso(Date fecha, DtAsignatura_Carrera asignatura_Carrera) {
+        this.fecha = fecha;
+        this.asignatura_Carrera = asignatura_Carrera;
     }
-
+        
     public Long getId() {
         return this.id;
     }
@@ -40,6 +42,24 @@ public class DtCurso implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+
+    public DtAsignatura_Carrera getAsignatura_Carrera() {
+        return asignatura_Carrera;
+    }
+
+    public void setAsignatura_Carrera(DtAsignatura_Carrera asignatura_Carrera) {
+        this.asignatura_Carrera = asignatura_Carrera;
+    }
+    
+    
 
     public List<DtHorario> getHorarios() {
         return this.horarios;

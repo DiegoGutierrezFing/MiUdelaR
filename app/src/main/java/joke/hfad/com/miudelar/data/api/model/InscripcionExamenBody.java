@@ -6,21 +6,21 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 
 /**
- * POJO para representar el cuerpo de la petición POST para la inscripcion a carrera
+ * POJO para representar el cuerpo de la petición POST para la inscripcion a examen
  */
-public class InscripcionCarreraBody implements Serializable {
+public class InscripcionExamenBody implements Serializable {
 
     @SerializedName("cedula")
     @Expose
     private String userId;
 
-    @SerializedName("codigo")
+    @SerializedName("idExamen")
     @Expose
-    private Long codigo;
+    private Long idExamen;
 
-    public InscripcionCarreraBody(String userId, Long codigo) {
+    public InscripcionExamenBody(String userId, Long idExamen) {
         this.userId = userId;
-        this.codigo = codigo;
+        this.idExamen = idExamen;
     }
 
     public String getUserId() {
@@ -31,11 +31,11 @@ public class InscripcionCarreraBody implements Serializable {
         this.userId = userId;
     }
 
-    public Long getCodigo() {
-        return codigo;
+    public Long getIdExamen() {
+        return idExamen;
     }
 
-    public void setCodigo(Long codigo) {
-        this.codigo = codigo;
+    public void setIdExamen(Long idExamen) {
+        this.idExamen= idExamen;
     }
 }

@@ -92,8 +92,5 @@ public class DtCarrera implements Serializable {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return Long.toString(codigo) + " - " + nombre;
-    }
+    
 }
