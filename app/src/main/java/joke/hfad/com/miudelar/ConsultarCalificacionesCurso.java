@@ -206,11 +206,11 @@ public class ConsultarCalificacionesCurso extends AppCompatActivity {
 
             View row = inflater.inflate(R.layout.curso_item, parent, false);
 
-            TextView idCurso = (TextView)row.findViewById(R.id.idCurso);
+            TextView idCurso = (TextView)row.findViewById(R.id.codigoCurso);
 
             idCurso.setText(cursos.get(position).getId().toString());
 
-            TextView nombreAsignatura = (TextView)row.findViewById(R.id.nombreAsignatura);
+            TextView nombreAsignatura = (TextView)row.findViewById(R.id.nombreCurso);
 
             nombreAsignatura.setText(cursos.get(position).getAsignatura_Carrera().getAsignatura().getNombre());
 

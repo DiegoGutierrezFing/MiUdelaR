@@ -1,13 +1,14 @@
-package joke.hfad.com.miudelar.data.api.model;
+/*package joke.hfad.com.miudelar.data.api.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
+import java.util.List;*/
 
 /**
  * Created by Windows XP on 14/10/18.
  */
+/*
 public class DtCarreraResponse {
 
     @SerializedName("")
@@ -22,3 +23,4 @@ public class DtCarreraResponse {
         this.carreras= carreras;
     }
 }
+*/

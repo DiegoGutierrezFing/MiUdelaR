@@ -3,7 +3,9 @@ package joke.hfad.com.miudelar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import joke.hfad.com.miudelar.data.api.model.DtAsignatura;
+import joke.hfad.com.miudelar.data.api.model.DtCarrera;
 import joke.hfad.com.miudelar.data.api.model.DtCurso;
 import joke.hfad.com.miudelar.data.api.model.InscripcionCursoBody;
 import joke.hfad.com.miudelar.data.prefs.SessionPrefs;
@@ -37,8 +40,6 @@ public class InscripcionACurso extends AppCompatActivity {
     private String usuario;
 
     private ApiInterface apiService;
-    List<DtAsignatura> asignaturas;
-    List<DtCurso> cursos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +56,7 @@ public class InscripcionACurso extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        spinnerCursos = (Spinner) findViewById(R.id.cursos);
         tituloListaCursos = (TextView) findViewById(R.id.tituloListaCursos);
         descripcion = (TextView) findViewById(R.id.descripcion);
         botonConfirmar = (Button) findViewById(R.id.botonConfirmar);
@@ -68,31 +70,41 @@ public class InscripcionACurso extends AppCompatActivity {
         usuario = getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USERNAME, null);
         contentType = "application/json";
 
-        asignaturas = new ArrayList<DtAsignatura>();
-        cursos = new ArrayList<DtCurso>();
-
         //Realizar peticion al servidor de MiUdelaR y llenar el Spinner de Cursos con elementos
-        Call<List<DtCurso>> callDtCurso = apiService.getCursosByCedula(authorization, usuario);
-        callDtCurso.enqueue(new Callback<List<DtCurso>>() {
+        Call<List<DtCurso>> c = apiService.getCursosByCedula(authorization, usuario);
+        c.enqueue(new Callback<List<DtCurso>>() {
 
             @Override
             public void onResponse(Call<List<DtCurso>> call, Response<List<DtCurso>> response) {
 
-                cursos = response.body();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        List<DtCurso> cursos = new ArrayList<DtCurso>();
+                        cursos = response.body();
 
-                ArrayAdapter<DtCurso> adapter = new MiAdaptador(InscripcionACurso.this, R.layout.curso_item, cursos);
+                        ArrayAdapter<DtCurso> adapter = new MiAdaptador(InscripcionACurso.this, R.layout.curso_item, cursos);
 
-                adapter.setDropDownViewResource(R.layout.curso_item);
+                        adapter.setDropDownViewResource(R.layout.curso_item);
 
-                spinnerCursos.setAdapter(adapter);
+                        spinnerCursos.setAdapter(adapter);
 
-                showProgress(false);
+                        showProgress(false);
+                    } else {
+                        //Toast.makeText(InscripcionACurso.this, "Error: respuesta del servidor vacia: Intente más tarde", Toast.LENGTH_LONG).show();
+                        Snackbar.make(findViewById(R.id.nav_inscripcion_a_curso_layout), "Error: respuesta del servidor vacia: Intente más tarde", Snackbar.LENGTH_LONG).show();
+                        return;
+                    }
+                } else {
+                    Toast.makeText(InscripcionACurso.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
 
             @Override
             public void onFailure(Call<List<DtCurso>> call, Throwable t) {
 
                 Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se realizaba la peticion", Toast.LENGTH_LONG).show();
+                t.printStackTrace();
             }
         });
     }
@@ -123,10 +135,14 @@ public class InscripcionACurso extends AppCompatActivity {
 
                             //if (!(response.body().toString().contains("Error"))){
                             // Mostrar mensaje de que se tuvo exito en la inscripcion
-                            Toast.makeText(InscripcionACurso.this, response.body().toString(), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(InscripcionACurso.this, response.body().toString(), Toast.LENGTH_SHORT).show();
+                            if (response.body().contains("OK"))
+                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_curso_layout), "Inscripción a curso exitosa!", Snackbar.LENGTH_LONG).show();
+                            else
+                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_curso_layout), response.body(), Snackbar.LENGTH_LONG).show();
 
                             // Ir al menu principal (main activity)
-                            irAMenuPrincipal();
+                            //irAMenuPrincipal();
 
                         }else {
                             Toast.makeText(InscripcionACurso.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
@@ -160,6 +176,7 @@ public class InscripcionACurso extends AppCompatActivity {
         tituloListaCursos.setVisibility(visibility);
         botonConfirmar.setVisibility(visibility);
         descripcion.setVisibility(visibility);
+        spinnerCursos.setVisibility(visibility);
     }
 
     private void irAMenuPrincipal() {
@@ -191,15 +208,21 @@ public class InscripcionACurso extends AppCompatActivity {
 
             View row = inflater.inflate(R.layout.curso_item, parent, false);
 
-            TextView idCurso = (TextView)row.findViewById(R.id.idCurso);
+            TextView idCurso = (TextView)row.findViewById(R.id.codigoCurso);
 
-            idCurso.setText(cursos.get(position).getId().toString());
+            idCurso.setText("Código de curso: " + cursos.get(position).getId().toString());
 
-            TextView nombreAsignatura = (TextView)row.findViewById(R.id.nombreAsignatura);
+            TextView nombreAsignatura = (TextView)row.findViewById(R.id.nombreCurso);
 
-            nombreAsignatura.setText(cursos.get(position).getAsignatura_Carrera().getAsignatura().getNombre());
+            nombreAsignatura.setText("Asignatura: " + cursos.get(position).getAsignatura_Carrera().getAsignatura().getNombre());
 
             return row;
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

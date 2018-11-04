@@ -1,11 +1,17 @@
 package joke.hfad.com.miudelar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -16,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import joke.hfad.com.miudelar.data.api.model.DtCarrera;
+import joke.hfad.com.miudelar.data.api.model.DtCurso;
 import joke.hfad.com.miudelar.data.api.model.InscripcionCarreraBody;
 import joke.hfad.com.miudelar.data.prefs.SessionPrefs;
 import retrofit2.Call;
@@ -73,16 +80,24 @@ public class InscripcionACarrera extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<DtCarrera>> call, Response<List<DtCarrera>> response) {
 
-                List<DtCarrera> carreras = new ArrayList<DtCarrera>();
-                carreras = response.body();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        List<DtCarrera> carreras = new ArrayList<DtCarrera>();
+                        carreras = response.body();
 
-                ArrayAdapter<DtCarrera> adapter = new ArrayAdapter<DtCarrera>(InscripcionACarrera.this, android.R.layout.simple_spinner_item, carreras);
+                        ArrayAdapter<DtCarrera> adapter = new MiAdaptador(InscripcionACarrera.this, R.layout.list_item_carrera, carreras);
 
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        adapter.setDropDownViewResource(R.layout.list_item_carrera);
 
-                spinnerCarreras.setAdapter(adapter);
+                        spinnerCarreras.setAdapter(adapter);
 
-                showProgress(false);
+                        showProgress(false);
+                    }
+                }
+                else {
+                    Toast.makeText(InscripcionACarrera.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
 
             @Override
@@ -112,7 +127,7 @@ public class InscripcionACarrera extends AppCompatActivity {
 
             dtCarrera = (DtCarrera) spinnerCarreras.getSelectedItem();
 
-            Toast.makeText(InscripcionACarrera.this, "Carrera seleccionada: " + dtCarrera.toString(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(InscripcionACarrera.this, "Carrera seleccionada: " + dtCarrera.toString(), Toast.LENGTH_SHORT).show();
             Toast.makeText(InscripcionACarrera.this, "Realizando inscripción: Espere...", Toast.LENGTH_SHORT).show();
 
             apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -120,52 +135,46 @@ public class InscripcionACarrera extends AppCompatActivity {
             authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
 
             Call<String> c = apiService.inscripcionCarrera(authorization, contentType, new InscripcionCarreraBody(usuario, dtCarrera.getCodigo()));
+
             c.enqueue(new Callback<String>() {
+
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
+
                     if (response.isSuccessful()){
                         if (response.body() != null){
 
                             //if (!(response.body().toString().contains("Error"))){
                             // Mostrar mensaje de que se tuvo exito en la inscripcion
-                            Toast.makeText(InscripcionACarrera.this, response.body().toString(), Toast.LENGTH_SHORT).show();
+                            //Log.i("response.body", response.body());
+                            //Toast.makeText(InscripcionACarrera.this, response.body(), Toast.LENGTH_SHORT).show();
+                            if (response.body().contains("OK"))
+                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_carrera_layout), "Inscripción a carrera exitosa!", Snackbar.LENGTH_LONG).show();
+                            else
+                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_carrera_layout), response.body(), Snackbar.LENGTH_LONG).show();
 
                             // Ir al menu principal (main activity)
-                            irAMenuPrincipal();
+                            //irAMenuPrincipal();
                             //}
 
                         }else {
-                            Toast.makeText(InscripcionACarrera.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
+                            Log.i("response.body", response.body());
+                            Toast.makeText(InscripcionACarrera.this, "Error: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }
 
                     // Procesar errores
                     if (!response.isSuccessful()) {
-                        //String error = response.body().toString();
-                        //    if (response.errorBody()
-                        //            .contentType()
-                        //            .subtype()
-                        //            .equals("json")) {
-                        //        ApiError apiError = ApiError.fromResponseBody(response.errorBody());
-
-                        //        error = apiError.getMessage();
-                        //        Log.d("LoginActivity", apiError.getDeveloperMessage());
-                        //    } else {
-                        //        try {
-                        //            // Reportar causas de error no relacionado con la API
-                        //            Log.d("LoginActivity", response.errorBody().string());
-                        //        } catch (IOException e) {
-                        //            e.printStackTrace();
-                        //        }
-                        //    }
-                        Toast.makeText(InscripcionACarrera.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                        Log.i("response.body", response.body());
+                        Toast.makeText(InscripcionACarrera.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
                         return;
                     }
                 }
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
+
                     Toast.makeText(InscripcionACarrera.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -179,6 +188,48 @@ public class InscripcionACarrera extends AppCompatActivity {
     private void irAMenuPrincipal() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
+    }
+
+    private class MiAdaptador extends ArrayAdapter<DtCarrera> {
+
+        List<DtCarrera> carreras = new ArrayList<DtCarrera>();
+
+        public MiAdaptador(Context context, int resource, List<DtCarrera> objects) {
+            super(context, resource, objects);
+            carreras = objects;
+        }
+
+        public View getDropDownView(int position, View convertView,ViewGroup parent) {
+            return getCustomView(position, convertView, parent);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            return getCustomView(position, convertView, parent);
+        }
+
+        public View getCustomView(int position, View convertView, ViewGroup parent) {
+
+            LayoutInflater inflater=getLayoutInflater();
+
+            View row = inflater.inflate(R.layout.list_item_carrera, parent, false);
+
+            TextView idCarrera = (TextView)row.findViewById(R.id.codigoCarrera);
+
+            idCarrera.setText("Código de carrera: " + carreras.get(position).getCodigo().toString());
+
+            TextView nombreCarrera = (TextView)row.findViewById(R.id.nombreCarrera);
+
+            nombreCarrera.setText("Carrera: " + carreras.get(position).getNombre());
+
+            return row;
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
 }

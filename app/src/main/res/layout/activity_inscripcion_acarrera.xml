@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="joke.hfad.com.miudelar.InscripcionACarrera">
+    android:id="@+id/nav_inscripcion_a_carrera_layout"
+    tools:context=".InscripcionACarrera">
 
     <TextView
         android:id="@+id/descripcion"
@@ -28,7 +29,8 @@
         tools:layout_editor_absoluteY="134dp"
         android:textSize="20dp"
         android:layout_above="@+id/carreras"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold" />
 
     <Spinner
         android:id="@+id/carreras"

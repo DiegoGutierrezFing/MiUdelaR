@@ -50,8 +50,8 @@ public class DtEstudiante_Curso implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 89 * hash + Objects.hashCode(this.usuario);
-        hash = 89 * hash + Objects.hashCode(this.curso);
+        hash = 53 * hash + Objects.hashCode(this.usuario);
+        hash = 53 * hash + Objects.hashCode(this.curso);
         return hash;
     }
 
@@ -76,5 +76,4 @@ public class DtEstudiante_Curso implements Serializable {
         return true;
     }
 
-    
 }

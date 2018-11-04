@@ -40,13 +40,13 @@ public interface ApiInterface {
     @GET("director/carrera/")
     public Call<List<DtCarrera>> getAllCarreras(@Header("Authorization") String authorization);
 
-    @GET("estudiante/curso/{cedula}")
+    @GET("estudiante/curso/{cedula}/")
     public Call<List<DtCurso>> getCursosByCedula(@Header("Authorization") String authorization, @Path("cedula") String cedula);
 
-    @GET("estudiante/examen/{cedula}")
+    @GET("estudiante/examen/{cedula}/")
     public Call<List<DtExamen>> getExamenesByCedula(@Header("Authorization") String authorization, @Path("cedula") String cedula);
 
-    @GET("estudiante/consultarCalificaciones/{cedula}/{idAsig_Carrera}")
+    @GET("estudiante/consultarCalificaciones/{cedula}/{idAsig_Carrera}/")
     public Call<DtCalificaciones> getCalificaciones(@Header("Authorization") String authorization,
                                                     @Path("cedula") String cedula,
                                                     @Path("idAsig_Carrera") Long idAsig_Carrera);

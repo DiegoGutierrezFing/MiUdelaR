@@ -3,6 +3,8 @@ package joke.hfad.com.miudelar;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.Date;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -21,6 +23,7 @@ public class ApiClient {
                         .baseUrl(BASE_URL)
                         .addConverterFactory(GsonConverterFactory.create(new GsonBuilder()
                                 .setLenient()
+                                .registerTypeAdapter(Date.class,new ImprovedDateTypeAdapter())
                                 .create()))
                         .addConverterFactory(ScalarsConverterFactory.create())
                         .build();

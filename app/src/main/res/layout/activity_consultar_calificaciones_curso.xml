@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".InscripcionACurso">
+    tools:context=".ConsultarCalificacionesCurso">
 
     <TextView
         android:id="@+id/descripcion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Aquí podrás consultar las calificaciones de los cursos de las asignaturas en las que te has inscripto. Una vez que selecciones el curso, deberás presionar el botón VER CALIFICACIONES"
+        android:text="Aquí podrás consultar las calificaciones de los cursos de las asignaturas en las que te has inscripto. Una vez que selecciones el curso, deberás presionar el botón VER CALIFICACIONES DEL CURSO"
         tools:layout_editor_absoluteY="9dp"
         android:layout_marginRight="8dp"
         android:layout_alignParentTop="true"
@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:text="Cursos"
         android:textSize="20dp"
+        android:textStyle="bold"
         android:layout_below="@+id/descripcion"
         android:layout_centerHorizontal="true" />
 
@@ -42,7 +43,7 @@
         android:id="@+id/botonConfirmar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ver calificaciones"
+        android:text="Ver calificaciones del curso"
         tools:layout_editor_absoluteX="96dp"
         tools:layout_editor_absoluteY="197dp"
         android:background="@color/colorPrimary"

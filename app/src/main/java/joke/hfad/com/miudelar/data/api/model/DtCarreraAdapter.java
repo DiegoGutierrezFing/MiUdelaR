@@ -1,4 +1,4 @@
-package joke.hfad.com.miudelar.data.api.model;
+/*package joke.hfad.com.miudelar.data.api.model;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -57,4 +57,4 @@ public class DtCarreraAdapter extends RecyclerView.Adapter<DtCarreraAdapter.DtCa
     public int getItemCount() {
         return carreras.size();
     }
-}
+}*/

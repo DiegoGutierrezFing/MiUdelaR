@@ -3,6 +3,7 @@ package joke.hfad.com.miudelar;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,8 +40,6 @@ public class InscripcionAExamen extends AppCompatActivity {
     private String usuario;
 
     private ApiInterface apiService;
-    List<DtAsignatura> asignaturas;
-    List<DtExamen> examenes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +52,7 @@ public class InscripcionAExamen extends AppCompatActivity {
             return;
         }
 
-        setContentView(R.layout.activity_inscripcion_acurso);
+        setContentView(R.layout.activity_inscripcion_aexamen);
 
         getSupportActionBar().setHomeButtonEnabled(true);
 
@@ -71,9 +70,6 @@ public class InscripcionAExamen extends AppCompatActivity {
         usuario = getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USERNAME, null);
         contentType = "application/json";
 
-        asignaturas = new ArrayList<DtAsignatura>();
-        examenes = new ArrayList<DtExamen>();
-
         //Realizar peticion al servidor de MiUdelaR y llenar el Spinner de Examenes con elementos
         Call<List<DtExamen>> callDtExamen = apiService.getExamenesByCedula(authorization, usuario);
         callDtExamen.enqueue(new Callback<List<DtExamen>>() {
@@ -81,15 +77,23 @@ public class InscripcionAExamen extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<DtExamen>> call, Response<List<DtExamen>> response) {
 
-                examenes = response.body();
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        List<DtExamen> examenes = response.body();
 
-                ArrayAdapter<DtExamen> adapter = new MiAdaptador(InscripcionAExamen.this, R.layout.curso_item, examenes);
+                        ArrayAdapter<DtExamen> adapter = new MiAdaptador(InscripcionAExamen.this, R.layout.examen_item, examenes);
 
-                adapter.setDropDownViewResource(R.layout.curso_item);
+                        adapter.setDropDownViewResource(R.layout.examen_item);
 
-                spinnerExamenes.setAdapter(adapter);
+                        spinnerExamenes.setAdapter(adapter);
 
-                showProgress(false);
+                        showProgress(false);
+                    }
+                }
+                else {
+                    Toast.makeText(InscripcionAExamen.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
 
             @Override
@@ -102,7 +106,7 @@ public class InscripcionAExamen extends AppCompatActivity {
 
     public void onClickConfirmar(View view){
 
-        spinnerExamenes = (Spinner) findViewById(R.id.cursos);
+        spinnerExamenes = (Spinner) findViewById(R.id.examenes);
 
         DtExamen dtExamen;
 
@@ -110,7 +114,7 @@ public class InscripcionAExamen extends AppCompatActivity {
 
             dtExamen= (DtExamen) spinnerExamenes.getSelectedItem();
 
-            Toast.makeText(InscripcionAExamen.this, "Examen seleccionado: " + dtExamen.getId(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(InscripcionAExamen.this, "Examen seleccionado: " + dtExamen.getId(), Toast.LENGTH_SHORT).show();
             Toast.makeText(InscripcionAExamen.this, "Realizando inscripción: Espere...", Toast.LENGTH_SHORT).show();
 
             apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -125,10 +129,14 @@ public class InscripcionAExamen extends AppCompatActivity {
                         if (response.body() != null){
 
                             // Mostrar mensaje de que se tuvo exito en la inscripcion
-                            Toast.makeText(InscripcionAExamen.this, response.body().toString(), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(InscripcionAExamen.this, response.body().toString(), Toast.LENGTH_SHORT).show();
+                            if (response.body().contains("OK"))
+                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_examen_layout), "Inscripción a exámen exitosa!", Snackbar.LENGTH_LONG).show();
+                            else
+                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_examen_layout), response.body(), Snackbar.LENGTH_LONG).show();
 
                             // Ir al menu principal (main activity)
-                            irAMenuPrincipal();
+                            //irAMenuPrincipal();
 
                         }else {
                             Toast.makeText(InscripcionAExamen.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
@@ -162,6 +170,7 @@ public class InscripcionAExamen extends AppCompatActivity {
         tituloListaExamenes.setVisibility(visibility);
         botonConfirmar.setVisibility(visibility);
         descripcion.setVisibility(visibility);
+        spinnerExamenes.setVisibility(visibility);
     }
 
     private void irAMenuPrincipal() {
@@ -191,15 +200,15 @@ public class InscripcionAExamen extends AppCompatActivity {
 
             LayoutInflater inflater=getLayoutInflater();
 
-            View row = inflater.inflate(R.layout.curso_item, parent, false);
+            View row = inflater.inflate(R.layout.examen_item, parent, false);
 
-            TextView idCurso = (TextView)row.findViewById(R.id.idCurso);
+            TextView idCurso = (TextView)row.findViewById(R.id.codigoExamen);
 
-            idCurso.setText(examenes.get(position).getId().toString());
+            idCurso.setText("Código de exámen: " + examenes.get(position).getId().toString());
 
-            TextView nombreAsignatura = (TextView)row.findViewById(R.id.nombreAsignatura);
+            TextView nombreAsignatura = (TextView)row.findViewById(R.id.nombreCurso);
 
-            nombreAsignatura.setText(examenes.get(position).getAsignatura_Carrera().getAsignatura().getNombre());
+            nombreAsignatura.setText("Asignatura: " + examenes.get(position).getAsignatura_Carrera().getAsignatura().getNombre());
 
             return row;
         }

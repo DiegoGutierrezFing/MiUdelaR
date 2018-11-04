@@ -4,18 +4,31 @@
     <item android:title="Inscripciones" >
     <menu>
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_inscripcion_a_carrera"
             android:icon="@drawable/ic_school_black_24dp"
             android:title="Inscripción a carrera" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_inscripcion_a_curso"
             android:icon="@drawable/ic_content_paste_black_24dp"
             android:title="Inscripción a curso" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_inscripcion_a_examen"
             android:icon="@drawable/ic_border_color_black_24dp"
             android:title="Inscripción a exámen" />
     </menu>
+    </item>
+
+    <item android:title="Consultar calificaciones" >
+        <menu>
+            <item
+                android:id="@+id/nav_calificaciones_cursos"
+                android:icon="@drawable/ic_calificaciones_24dp"
+                android:title="Calificaciones de cursos" />
+            <item
+                android:id="@+id/nav_calificaciones_examenes"
+                android:icon="@drawable/ic_calificaciones_24dp"
+                android:title="Calificaciones de examenes" />
+        </menu>
     </item>
 
 </menu>

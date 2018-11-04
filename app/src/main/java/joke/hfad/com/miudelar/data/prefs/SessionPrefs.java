@@ -63,15 +63,15 @@ public class SessionPrefs {
     }
 
     private void timeout(){
-        new CountDownTimer(60000, 1000) {
+        new CountDownTimer(59*60000, 1000) {
 
             public void onTick(long millisUntilFinished) {
 
-                //Log.i("tiempo restante: ", Long.toString(millisUntilFinished / 1000) + " segundos");
+                Log.i("[MIUDELAR] timeout: ", Long.toString(millisUntilFinished / 1000) + " segundos");
             }
 
             public void onFinish() {
-                //Log.i("finalizado: ", "terminado");
+                Log.i("[MIUDELAR]timeout: ", "terminado");
                 logOut();
             }
         }.start();

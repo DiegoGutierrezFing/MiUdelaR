@@ -39,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputLayout mFloatLabelPassword;
     private View mProgressView;
     private View mLoginFormView;
+    private Button mSignInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // Crear adaptador Retrofit
-        mRestAdapter = ApiClient.getClient();/*new Retrofit.Builder()
-                .baseUrl(ApiInterface.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();*/
+        mRestAdapter = ApiClient.getClient();
 
         // Crear conexión a la API
         restApi = mRestAdapter.create(ApiInterface.class);
@@ -59,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView = (EditText) findViewById(R.id.password);
         mFloatLabelUserId = (TextInputLayout) findViewById(R.id.float_label_user_id);
         mFloatLabelPassword = (TextInputLayout) findViewById(R.id.float_label_password);
-        Button mSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        mSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mLoginFormView = findViewById(R.id.layout_login);
         mProgressView = findViewById(R.id.login_progress);
 
@@ -148,7 +146,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (response.isSuccessful()){
                         if (response.body() != null){
 
-                            if (!(response.body().toString().contains("Error: Usuario o contraseña incorrecta"))){
+                            if (!(response.body().contains("Error"))){
 
                                 // Guardar token y userID en preferencias
                                 SessionPrefs.get(LoginActivity.this).guardarToken(response.body().toString(), userId);
