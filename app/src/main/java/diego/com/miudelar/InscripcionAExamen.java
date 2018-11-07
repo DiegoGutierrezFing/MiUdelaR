@@ -100,7 +100,7 @@ public class InscripcionAExamen extends AppCompatActivity {
                 }
                 else {
                     Toast.makeText(InscripcionAExamen.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
-                    return;
+                    irAMenuPrincipal();
                 }
             }
 
@@ -108,6 +108,7 @@ public class InscripcionAExamen extends AppCompatActivity {
             public void onFailure(Call<List<DtExamen>> call, Throwable t) {
 
                 Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se realizaba la peticion", Toast.LENGTH_LONG).show();
+                irAMenuPrincipal();
             }
         });
     }
@@ -147,25 +148,23 @@ public class InscripcionAExamen extends AppCompatActivity {
                                                 Log.i("Snackbar", "Pulsada acción snackbar!");
                                             }
                                         }).show();
-                                return;
                             }
                             else {
                                 Snackbar.make(findViewById(R.id.nav_inscripcion_a_examen_layout), response.body(), Snackbar.LENGTH_LONG).show();
-                                return;
                                 // Ir al menu principal (main activity)
-                                //irAMenuPrincipal();
+                                irAMenuPrincipal();
                             }
 
                         } else {
                             Toast.makeText(InscripcionAExamen.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
-                            return;
+                            irAMenuPrincipal();
                         }
                     }
                     // Procesar errores
                     else {
                         Toast.makeText(InscripcionAExamen.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
                         Log.i("Body error", response.errorBody().toString());
-                        return;
+                        irAMenuPrincipal();
                     }
                 }
 
@@ -173,13 +172,13 @@ public class InscripcionAExamen extends AppCompatActivity {
                 public void onFailure(Call<String> call, Throwable t) {
                     Toast.makeText(InscripcionAExamen.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
                     t.printStackTrace();
-                    return;
+                    irAMenuPrincipal();
                 }
             });
 
         } else  {
             Toast.makeText(InscripcionAExamen.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
-            return;
+            irAMenuPrincipal();
         }
     }
 

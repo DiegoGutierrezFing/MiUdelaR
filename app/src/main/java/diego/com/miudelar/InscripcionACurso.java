@@ -98,18 +98,15 @@ public class InscripcionACurso extends AppCompatActivity {
 
                         showProgress(false);
 
-                        return;
-
                     } else {
                         Toast.makeText(InscripcionACurso.this, "Error: respuesta del servidor vacia: Intente más tarde", Toast.LENGTH_LONG).show();
-                        return;
+                        irAMenuPrincipal();
                     }
                 } else {
 
                     Toast.makeText(InscripcionACurso.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
                     Log.i("Body error", response.errorBody().toString());
-
-                    return;
+                    irAMenuPrincipal();
                 }
             }
 
@@ -118,8 +115,7 @@ public class InscripcionACurso extends AppCompatActivity {
 
                 Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se realizaba la peticion", Toast.LENGTH_LONG).show();
                 t.printStackTrace();
-
-                return;
+                irAMenuPrincipal();
             }
         });
     }
@@ -134,7 +130,7 @@ public class InscripcionACurso extends AppCompatActivity {
 
             dtCurso= (DtCurso) spinnerCursos.getSelectedItem();
 
-            Toast.makeText(InscripcionACurso.this, "Curso seleccionado: " + dtCurso.getId(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(InscripcionACurso.this, "Curso seleccionado: " + dtCurso.getId(), Toast.LENGTH_SHORT).show();
             Toast.makeText(InscripcionACurso.this, "Realizando inscripción: Espere...", Toast.LENGTH_SHORT).show();
 
             apiService = ApiClient.getClient(url).create(ApiInterface.class);
@@ -160,26 +156,24 @@ public class InscripcionACurso extends AppCompatActivity {
                                                 Log.i("Snackbar", "Pulsada acción snackbar!");
                                             }
                                         }).show();
-                                return;
                             }
                             else {
 
                                 Toast.makeText(InscripcionACurso.this, response.body(), Toast.LENGTH_SHORT).show();
-                                return;
                                 // Ir al menu principal (main activity)
-                                //irAMenuPrincipal();
+                                irAMenuPrincipal();
                             }
 
                         } else {
                             Toast.makeText(InscripcionACurso.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
-                            return;
+                            irAMenuPrincipal();
                         }
                     }
                     // Procesar errores
                     else {
                         Toast.makeText(InscripcionACurso.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
                         Log.i("Body error", response.errorBody().toString());
-                        return;
+                        irAMenuPrincipal();
                     }
                 }
 
@@ -187,13 +181,13 @@ public class InscripcionACurso extends AppCompatActivity {
                 public void onFailure(Call<String> call, Throwable t) {
                     Toast.makeText(InscripcionACurso.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
                     t.printStackTrace();
-                    return;
+                    irAMenuPrincipal();
                 }
             });
 
         } else  {
             Toast.makeText(InscripcionACurso.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
-            return;
+            irAMenuPrincipal();
         }
     }
 

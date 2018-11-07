@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Resultados de cursos"
-        android:id="@+id/textView"
+        android:id="@+id/descripcion"
         android:textStyle="bold"
         android:textAlignment="center" />
 
@@ -33,7 +33,9 @@
         android:id="@+id/progressBar"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:progressTint="@color/colorPrimary" />
 
 
 </LinearLayout>

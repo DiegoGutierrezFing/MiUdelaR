@@ -33,7 +33,9 @@
         android:id="@+id/progressBar"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:visibility="gone" />
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:progressTint="@color/colorPrimary" />
 
 
 </LinearLayout>

@@ -56,6 +56,7 @@ public class ResultadoCursos extends AppCompatActivity {
 
         listViewCalificaciones = (ListView) findViewById(R.id.listViewResultadosCursos);
         mProgressView = findViewById(R.id.progressBar);
+        descripcion = (TextView) findViewById(R.id.descripcion);
 
         try {
             url = ApiClient.getProperty("urlServidor",getApplicationContext());
