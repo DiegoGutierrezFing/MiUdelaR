@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/nav_inscripcion_a_carrera_layout"
-    tools:context=".InscripcionACarrera">
+    tools:context="diego.com.miudelar.InscripcionACarrera">
 
     <TextView
         android:id="@+id/descripcion"

@@ -4,7 +4,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion '28.0.1'
     defaultConfig {
-        applicationId 'com.miudelar'
+        applicationId 'diego.com.miudelar'
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
@@ -31,11 +31,14 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.google.code.gson:gson:2.2.4'
-    compile 'com.android.volley:volley:1.0.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.squareup.retrofit2:retrofit:2.4.0'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
 
     // Retrofit Scalars Converter
     compile 'com.squareup.retrofit2:converter-scalars:2.3.0'
+
+    compile 'com.google.firebase:firebase-core:9.2.0'       // this line must be included to integrate with Firebase
+    compile 'com.google.firebase:firebase-messaging:9.2.0'  // this line must be included to use FCM
 }
+apply plugin: 'com.google.gms.google-services'
