@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +41,7 @@ public class InscripcionACurso extends AppCompatActivity {
     private String usuario;
 
     private ApiInterface apiService;
+    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +64,16 @@ public class InscripcionACurso extends AppCompatActivity {
         botonConfirmar = (Button) findViewById(R.id.botonConfirmar);
         mProgressView = findViewById(R.id.progressBar);
 
+        try {
+            url = ApiClient.getProperty("urlServidor",getApplicationContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+            url = "http://tsi-diego.eastus.cloudapp.azure.com:8080/miudelar-server/";
+        }
+
         showProgress(true);
 
-        apiService = ApiClient.getClient().create(ApiInterface.class);
+        apiService = ApiClient.getClient(url).create(ApiInterface.class);
 
         authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
         usuario = getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USERNAME, null);
@@ -89,13 +98,18 @@ public class InscripcionACurso extends AppCompatActivity {
                         spinnerCursos.setAdapter(adapter);
 
                         showProgress(false);
+
+                        return;
+
                     } else {
-                        //Toast.makeText(InscripcionACurso.this, "Error: respuesta del servidor vacia: Intente más tarde", Toast.LENGTH_LONG).show();
-                        Snackbar.make(findViewById(R.id.nav_inscripcion_a_curso_layout), "Error: respuesta del servidor vacia: Intente más tarde", Snackbar.LENGTH_LONG).show();
+                        Toast.makeText(InscripcionACurso.this, "Error: respuesta del servidor vacia: Intente más tarde", Toast.LENGTH_LONG).show();
                         return;
                     }
                 } else {
+
                     Toast.makeText(InscripcionACurso.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                    Log.i("Body error", response.errorBody().toString());
+
                     return;
                 }
             }
@@ -105,6 +119,8 @@ public class InscripcionACurso extends AppCompatActivity {
 
                 Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se realizaba la peticion", Toast.LENGTH_LONG).show();
                 t.printStackTrace();
+
+                return;
             }
         });
     }
@@ -122,7 +138,7 @@ public class InscripcionACurso extends AppCompatActivity {
             Toast.makeText(InscripcionACurso.this, "Curso seleccionado: " + dtCurso.getId(), Toast.LENGTH_SHORT).show();
             Toast.makeText(InscripcionACurso.this, "Realizando inscripción: Espere...", Toast.LENGTH_SHORT).show();
 
-            apiService = ApiClient.getClient().create(ApiInterface.class);
+            apiService = ApiClient.getClient(url).create(ApiInterface.class);
 
             authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
 
@@ -136,24 +152,34 @@ public class InscripcionACurso extends AppCompatActivity {
                             //if (!(response.body().toString().contains("Error"))){
                             // Mostrar mensaje de que se tuvo exito en la inscripcion
                             //Toast.makeText(InscripcionACurso.this, response.body().toString(), Toast.LENGTH_SHORT).show();
-                            if (response.body().contains("OK"))
-                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_curso_layout), "Inscripción a curso exitosa!", Snackbar.LENGTH_LONG).show();
-                            else
-                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_curso_layout), response.body(), Snackbar.LENGTH_LONG).show();
+                            if (response.body().contains("OK")) {
+                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_carrera_layout), "Inscripción a curso exitosa!", Snackbar.LENGTH_LONG)
+                                        .setActionTextColor(getResources().getColor(R.color.snackbar_action))
+                                        .setAction("Aceptar", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Log.i("Snackbar", "Pulsada acción snackbar!");
+                                            }
+                                        }).show();
+                                return;
+                            }
+                            else {
 
-                            // Ir al menu principal (main activity)
-                            //irAMenuPrincipal();
+                                Toast.makeText(InscripcionACurso.this, response.body(), Toast.LENGTH_SHORT).show();
+                                return;
+                                // Ir al menu principal (main activity)
+                                //irAMenuPrincipal();
+                            }
 
-                        }else {
+                        } else {
                             Toast.makeText(InscripcionACurso.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }
-
                     // Procesar errores
-                    if (!response.isSuccessful()) {
-
+                    else {
                         Toast.makeText(InscripcionACurso.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                        Log.i("Body error", response.errorBody().toString());
                         return;
                     }
                 }
@@ -161,11 +187,14 @@ public class InscripcionACurso extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
                     Toast.makeText(InscripcionACurso.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
+                    return;
                 }
             });
 
         } else  {
             Toast.makeText(InscripcionACurso.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
+            return;
         }
     }
 
@@ -215,6 +244,10 @@ public class InscripcionACurso extends AppCompatActivity {
             TextView nombreAsignatura = (TextView)row.findViewById(R.id.nombreCurso);
 
             nombreAsignatura.setText("Asignatura: " + cursos.get(position).getAsignatura_Carrera().getAsignatura().getNombre());
+
+            TextView nombreCarrera = (TextView)row.findViewById(R.id.carreraCurso);
+
+            nombreCarrera.setText("Carrera: " + cursos.get(position).getAsignatura_Carrera().getCarrera().getNombre());
 
             return row;
         }

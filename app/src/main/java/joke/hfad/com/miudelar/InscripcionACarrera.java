@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,7 @@ public class InscripcionACarrera extends AppCompatActivity {
     private String usuario;
 
     private ApiInterface apiService;
+    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +67,16 @@ public class InscripcionACarrera extends AppCompatActivity {
         botonConfirmar = (Button) findViewById(R.id.botonConfirmar);
         mProgressView = findViewById(R.id.progressBar);
 
+        try {
+            url = ApiClient.getProperty("urlServidor",getApplicationContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+            url = "http://tsi-diego.eastus.cloudapp.azure.com:8080/miudelar-server/";
+        }
+
         showProgress(true);
 
-        apiService = ApiClient.getClient().create(ApiInterface.class);
+        apiService = ApiClient.getClient(url).create(ApiInterface.class);
 
         authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
         usuario = getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USERNAME, null);
@@ -92,6 +101,11 @@ public class InscripcionACarrera extends AppCompatActivity {
                         spinnerCarreras.setAdapter(adapter);
 
                         showProgress(false);
+                        return;
+                    }
+                    else {
+                        Toast.makeText(InscripcionACarrera.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
+                        return;
                     }
                 }
                 else {
@@ -103,7 +117,7 @@ public class InscripcionACarrera extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<DtCarrera>> call, Throwable t) {
 
-                Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se realizaba la peticion", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se contactaba al servidor", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -128,9 +142,10 @@ public class InscripcionACarrera extends AppCompatActivity {
             dtCarrera = (DtCarrera) spinnerCarreras.getSelectedItem();
 
             //Toast.makeText(InscripcionACarrera.this, "Carrera seleccionada: " + dtCarrera.toString(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(InscripcionACarrera.this, "Realizando inscripción: Espere...", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(InscripcionACarrera.this, "Realizando inscripción: Espere...", Toast.LENGTH_SHORT).show();
+            Snackbar.make(findViewById(R.id.nav_inscripcion_a_carrera_layout), "Realizando inscripción: Espere...", Snackbar.LENGTH_LONG).show();
 
-            apiService = ApiClient.getClient().create(ApiInterface.class);
+            apiService = ApiClient.getClient(url).create(ApiInterface.class);
 
             authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
 
@@ -148,24 +163,33 @@ public class InscripcionACarrera extends AppCompatActivity {
                             // Mostrar mensaje de que se tuvo exito en la inscripcion
                             //Log.i("response.body", response.body());
                             //Toast.makeText(InscripcionACarrera.this, response.body(), Toast.LENGTH_SHORT).show();
-                            if (response.body().contains("OK"))
-                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_carrera_layout), "Inscripción a carrera exitosa!", Snackbar.LENGTH_LONG).show();
-                            else
-                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_carrera_layout), response.body(), Snackbar.LENGTH_LONG).show();
+                            if (response.body().contains("OK")) {
 
+                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_carrera_layout), "Inscripción a carrera exitosa!", Snackbar.LENGTH_LONG)
+                                        .setActionTextColor(getResources().getColor(R.color.snackbar_action))
+                                        .setAction("Aceptar", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Log.i("Snackbar", "Pulsada acción snackbar!");
+                                            }
+                                        }).show();
+                                return;
+                            }
+                            else {
+                                Toast.makeText(InscripcionACarrera.this, response.body(), Toast.LENGTH_SHORT).show();
+                                return;
                             // Ir al menu principal (main activity)
                             //irAMenuPrincipal();
-                            //}
+                            }
 
-                        }else {
+                        } else {
                             Log.i("response.body", response.body());
                             Toast.makeText(InscripcionACarrera.this, "Error: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }
-
                     // Procesar errores
-                    if (!response.isSuccessful()) {
+                    else {
                         Log.i("response.body", response.body());
                         Toast.makeText(InscripcionACarrera.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
                         return;
@@ -176,12 +200,14 @@ public class InscripcionACarrera extends AppCompatActivity {
                 public void onFailure(Call<String> call, Throwable t) {
 
                     Toast.makeText(InscripcionACarrera.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
+                    return;
                 }
             });
 
 
         } else  {
             Toast.makeText(InscripcionACarrera.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
+            return;
         }
     }
 

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +42,7 @@ public class InscripcionAExamen extends AppCompatActivity {
     private String usuario;
 
     private ApiInterface apiService;
+    private String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +65,16 @@ public class InscripcionAExamen extends AppCompatActivity {
         botonConfirmar = (Button) findViewById(R.id.botonConfirmar);
         mProgressView = findViewById(R.id.progressBar);
 
+        try {
+            url = ApiClient.getProperty("urlServidor",getApplicationContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+            url = "http://tsi-diego.eastus.cloudapp.azure.com:8080/miudelar-server/";
+        }
+
         showProgress(true);
 
-        apiService = ApiClient.getClient().create(ApiInterface.class);
+        apiService = ApiClient.getClient(url).create(ApiInterface.class);
 
         authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
         usuario = getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USERNAME, null);
@@ -117,7 +127,7 @@ public class InscripcionAExamen extends AppCompatActivity {
             //Toast.makeText(InscripcionAExamen.this, "Examen seleccionado: " + dtExamen.getId(), Toast.LENGTH_SHORT).show();
             Toast.makeText(InscripcionAExamen.this, "Realizando inscripción: Espere...", Toast.LENGTH_SHORT).show();
 
-            apiService = ApiClient.getClient().create(ApiInterface.class);
+            apiService = ApiClient.getClient(url).create(ApiInterface.class);
 
             authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
 
@@ -130,24 +140,33 @@ public class InscripcionAExamen extends AppCompatActivity {
 
                             // Mostrar mensaje de que se tuvo exito en la inscripcion
                             //Toast.makeText(InscripcionAExamen.this, response.body().toString(), Toast.LENGTH_SHORT).show();
-                            if (response.body().contains("OK"))
-                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_examen_layout), "Inscripción a exámen exitosa!", Snackbar.LENGTH_LONG).show();
-                            else
+                            if (response.body().contains("OK")) {
+                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_carrera_layout), "Inscripción a exámen exitosa!", Snackbar.LENGTH_LONG)
+                                        .setActionTextColor(getResources().getColor(R.color.snackbar_action))
+                                        .setAction("Aceptar", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Log.i("Snackbar", "Pulsada acción snackbar!");
+                                            }
+                                        }).show();
+                                return;
+                            }
+                            else {
                                 Snackbar.make(findViewById(R.id.nav_inscripcion_a_examen_layout), response.body(), Snackbar.LENGTH_LONG).show();
+                                return;
+                                // Ir al menu principal (main activity)
+                                //irAMenuPrincipal();
+                            }
 
-                            // Ir al menu principal (main activity)
-                            //irAMenuPrincipal();
-
-                        }else {
+                        } else {
                             Toast.makeText(InscripcionAExamen.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
                             return;
                         }
                     }
-
                     // Procesar errores
-                    if (!response.isSuccessful()) {
-
+                    else {
                         Toast.makeText(InscripcionAExamen.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                        Log.i("Body error", response.errorBody().toString());
                         return;
                     }
                 }
@@ -155,11 +174,14 @@ public class InscripcionAExamen extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
                     Toast.makeText(InscripcionAExamen.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
+                    return;
                 }
             });
 
         } else  {
             Toast.makeText(InscripcionAExamen.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
+            return;
         }
     }
 
@@ -210,8 +232,18 @@ public class InscripcionAExamen extends AppCompatActivity {
 
             nombreAsignatura.setText("Asignatura: " + examenes.get(position).getAsignatura_Carrera().getAsignatura().getNombre());
 
+            TextView nombreCarrera = (TextView)row.findViewById(R.id.carreraExamen);
+
+            nombreCarrera.setText("Carrera: " + examenes.get(position).getAsignatura_Carrera().getCarrera().getNombre());
+
             return row;
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
 }

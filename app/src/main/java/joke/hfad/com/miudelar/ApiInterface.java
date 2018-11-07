@@ -46,6 +46,10 @@ public interface ApiInterface {
     @GET("estudiante/examen/{cedula}/")
     public Call<List<DtExamen>> getExamenesByCedula(@Header("Authorization") String authorization, @Path("cedula") String cedula);
 
+    @GET("estudiante/consultarCalificaciones/{cedula}/")
+    public Call<DtCalificaciones> getCalificacionesSAsig(@Header("Authorization") String authorization,
+                                                    @Path("cedula") String cedula);
+
     @GET("estudiante/consultarCalificaciones/{cedula}/{idAsig_Carrera}/")
     public Call<DtCalificaciones> getCalificaciones(@Header("Authorization") String authorization,
                                                     @Path("cedula") String cedula,

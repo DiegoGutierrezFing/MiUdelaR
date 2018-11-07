@@ -9,22 +9,22 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    android:id="@+id/nav_resultados_cursos_layout"
-    tools:context=".ResultadoCursos">
+    android:id="@+id/nav_resultados_examenes_layout"
+    tools:context=".ResultadoExamenes">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Resultados de cursos"
-        android:id="@+id/textView"
+        android:text="Resultados de exámenes"
+        android:id="@+id/descripcion"
         android:textStyle="bold"
         android:textAlignment="center" />
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listViewResultadosCursos" />
+        android:id="@+id/listViewResultadosExamenes" />
 
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"

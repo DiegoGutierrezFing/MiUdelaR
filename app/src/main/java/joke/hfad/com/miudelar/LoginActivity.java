@@ -19,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 import joke.hfad.com.miudelar.data.api.model.LoginBody;
 import joke.hfad.com.miudelar.data.prefs.SessionPrefs;
 import retrofit2.Call;
@@ -28,8 +30,9 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private Retrofit mRestAdapter;
+    //private Retrofit mRestAdapter;
     private ApiInterface restApi;
+    private String url;
 
     // UI references.
     private ImageView mLogoView;
@@ -47,10 +50,17 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // Crear adaptador Retrofit
-        mRestAdapter = ApiClient.getClient();
+        //mRestAdapter = ApiClient.getClient();
 
         // Crear conexión a la API
-        restApi = mRestAdapter.create(ApiInterface.class);
+        try {
+            url = ApiClient.getProperty("urlServidor",getApplicationContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+            url = "http://tsi-diego.eastus.cloudapp.azure.com:8080/miudelar-server/";
+        }
+
+        restApi = ApiClient.getClient(url).create(ApiInterface.class);
 
         //mLogoView = (ImageView) findViewById(R.id.logo);
         mUserIdView = (EditText) findViewById(R.id.user_id);

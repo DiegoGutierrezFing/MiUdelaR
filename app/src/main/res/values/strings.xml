@@ -11,7 +11,7 @@
     <string name="prompt_userID">Usuario</string>
     <string name="prompt_password">Contraseña</string>
     <string name="action_sign_in">Ingresar</string>
-    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_sign_in_short">Ir</string>
     <string name="error_invalid_user_id">Este usuario es invalido</string>
     <string name="error_invalid_password">Contraseña invalida</string>
     <string name="error_incorrect_password">La contraseña es incorrecta</string>

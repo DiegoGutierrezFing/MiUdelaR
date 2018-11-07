@@ -2,15 +2,12 @@ package joke.hfad.com.miudelar;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,14 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import joke.hfad.com.miudelar.data.api.model.DtCalificaciones;
-import joke.hfad.com.miudelar.data.api.model.DtEstudiante_Curso;
-import joke.hfad.com.miudelar.data.api.model.DtEstudiante_Curso;
+import joke.hfad.com.miudelar.data.api.model.DtEstudiante_Examen;
+import joke.hfad.com.miudelar.data.api.model.DtEstudiante_Examen;
 import joke.hfad.com.miudelar.data.prefs.SessionPrefs;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ResultadoCursos extends AppCompatActivity {
+public class ResultadoExamenes extends AppCompatActivity {
 
     private String authorization;
     private String contentType;
@@ -53,12 +50,13 @@ public class ResultadoCursos extends AppCompatActivity {
             return;
         }
 
-        setContentView(R.layout.activity_resultado_cursos);
+        setContentView(R.layout.activity_resultado_examenes);
 
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        listViewCalificaciones = (ListView) findViewById(R.id.listViewResultadosCursos);
+        listViewCalificaciones = (ListView) findViewById(R.id.listViewResultadosExamenes);
         mProgressView = findViewById(R.id.progressBar);
+        descripcion = (TextView) findViewById(R.id.descripcion);
 
         try {
             url = ApiClient.getProperty("urlServidor",getApplicationContext());
@@ -86,22 +84,22 @@ public class ResultadoCursos extends AppCompatActivity {
                     if (response.body() != null) {
                         DtCalificaciones dtCalificaciones = response.body();
 
-                        List<DtEstudiante_Curso> calificaciones = (ArrayList<DtEstudiante_Curso>) dtCalificaciones.getEstudiante_curso();
+                        List<DtEstudiante_Examen> calificaciones = (ArrayList<DtEstudiante_Examen>) dtCalificaciones.getEstudiante_examen();
 
-                        ArrayAdapter<DtEstudiante_Curso> adapter = new MiAdaptador(ResultadoCursos.this, R.id.listViewResultadosCursos, calificaciones);
+                        ArrayAdapter<DtEstudiante_Examen> adapter = new MiAdaptador(ResultadoExamenes.this, R.id.listViewResultadosExamenes, calificaciones);
 
-                        adapter.setDropDownViewResource(R.layout.resultado_curso_row);
+                        adapter.setDropDownViewResource(R.layout.resultado_examen_row);
 
                         listViewCalificaciones.setAdapter(adapter);
 
                         showProgress(false);
                     } else {
-                        Toast.makeText(ResultadoCursos.this, "Error: respuesta del servidor vacia: Intente más tarde", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ResultadoExamenes.this, "Error: respuesta del servidor vacia: Intente más tarde", Toast.LENGTH_LONG).show();
                         return;
                     }
                 } else {
 
-                    Toast.makeText(ResultadoCursos.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ResultadoExamenes.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
                     Log.i("Body error", response.errorBody().toString());
 
                     return;
@@ -111,7 +109,7 @@ public class ResultadoCursos extends AppCompatActivity {
             @Override
             public void onFailure(Call<DtCalificaciones> call, Throwable t) {
 
-                Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se realizaba la peticion", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se realizaba la petición", Toast.LENGTH_LONG).show();
                 t.printStackTrace();
 
                 return;
@@ -138,11 +136,11 @@ public class ResultadoCursos extends AppCompatActivity {
         return true;
     }
 
-    private class MiAdaptador extends ArrayAdapter<DtEstudiante_Curso> {
+    private class MiAdaptador extends ArrayAdapter<DtEstudiante_Examen> {
 
-        List<DtEstudiante_Curso> lista = new ArrayList<>();
+        List<DtEstudiante_Examen> lista = new ArrayList<>();
 
-        public MiAdaptador(Context context, int resource, List<DtEstudiante_Curso> objects) {
+        public MiAdaptador(Context context, int resource, List<DtEstudiante_Examen> objects) {
             super(context, resource, objects);
             lista = objects;
         }
@@ -160,21 +158,21 @@ public class ResultadoCursos extends AppCompatActivity {
 
             LayoutInflater inflater=getLayoutInflater();
 
-            View row = inflater.inflate(R.layout.resultado_curso_row, parent, false);
+            View row = inflater.inflate(R.layout.resultado_examen_row, parent, false);
 
-            TextView idCurso = (TextView) row.findViewById(R.id.idCurso);
-            idCurso.setText("Código de curso: " + lista.get(position).getCurso().getId().toString());
+            TextView idExamen = (TextView) row.findViewById(R.id.idExamen);
+            idExamen.setText("Código de examen: " + lista.get(position).getExamen().getId().toString());
 
-            TextView nombreAsignatura = (TextView)row.findViewById(R.id.nombreCurso);
-            nombreAsignatura.setText("Asignatura: " + lista.get(position).getCurso().getAsignatura_Carrera().getAsignatura().getNombre());
+            TextView nombreAsignatura = (TextView)row.findViewById(R.id.nombreExamen);
+            nombreAsignatura.setText("Asignatura: " + lista.get(position).getExamen().getAsignatura_Carrera().getAsignatura().getNombre());
 
             TextView nombreCarrera = (TextView)row.findViewById(R.id.nombreCarrera);
-            nombreCarrera.setText("Carrera: " + lista.get(position).getCurso().getAsignatura_Carrera().getCarrera().getNombre());
+            nombreCarrera.setText("Carrera: " + lista.get(position).getExamen().getAsignatura_Carrera().getCarrera().getNombre());
 
-            TextView fechaCurso = (TextView) row.findViewById(R.id.fechaCurso);
-            fechaCurso.setText("Fecha del curso: " + lista.get(position).getCurso().getFecha().toString());
+            TextView fechaCurso = (TextView) row.findViewById(R.id.fechaExamen);
+            fechaCurso.setText("Fecha del examen: " + lista.get(position).getExamen().getFecha().toString());
 
-            TextView calificacion = (TextView) row.findViewById(R.id.calificacionCurso);
+            TextView calificacion = (TextView) row.findViewById(R.id.calificacionExamen);
             calificacion.setText("Calificación: " + lista.get(position).getCalificacion().toString());
 
             return row;

@@ -27,7 +27,8 @@
         android:text="Cursos"
         android:textSize="20dp"
         android:layout_below="@+id/descripcion"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold" />
 
     <Spinner
         android:id="@+id/cursos"
@@ -46,12 +47,12 @@
         android:text="Confirmar inscripción"
         tools:layout_editor_absoluteX="96dp"
         tools:layout_editor_absoluteY="197dp"
-        android:background="@color/colorPrimary"
         android:textColor="#ffffff"
         android:padding="10dp"
         android:onClick="onClickConfirmar"
         android:layout_below="@+id/cursos"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/estilo_boton" />
 
     <ProgressBar
         android:layout_width="wrap_content"

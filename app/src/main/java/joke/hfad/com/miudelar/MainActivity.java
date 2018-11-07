@@ -110,6 +110,16 @@ public class MainActivity extends AppCompatActivity
             startActivity(i);
         }
 
+        else if (id == R.id.nav_calificaciones_cursos) {
+            Intent i = new Intent(this, ResultadoCursos.class);
+            startActivity(i);
+        }
+
+        else if (id == R.id.nav_calificaciones_examenes) {
+            Intent i = new Intent(this, ResultadoExamenes.class);
+            startActivity(i);
+        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
