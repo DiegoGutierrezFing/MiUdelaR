@@ -61,11 +61,13 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
 
         if ((cedula != null)&&(token != null)) {
 
-            enviarDatosTokenFirebaseAServidor(cedula, token, getApplicationContext());
+            Log.e("Enviando: ", "sendRegistrationToServer: " + token);
+            String authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
+            enviarDatosTokenFirebaseAServidor(authorization, cedula, token, getApplicationContext());
         }
     }
 
-    public static void enviarDatosTokenFirebaseAServidor(String cedula, String token, Context context){
+    public static void enviarDatosTokenFirebaseAServidor(String authorization, String cedula, String token, Context context){
 
         ApiInterface restApi;
 
@@ -80,7 +82,7 @@ public class FirebaseIDService extends FirebaseInstanceIdService {
 
         restApi = ApiClient.getClient(url).create(ApiInterface.class);
 
-        Call<String> enviarTokenFirebaseAServidor = restApi.enviarTokenFirebase(new TokenFirebaseBody(cedula, token));
+        Call<String> enviarTokenFirebaseAServidor = restApi.enviarTokenFirebase(authorization, "application/json", new TokenFirebaseBody(cedula, token));
         enviarTokenFirebaseAServidor.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response){

@@ -24,6 +24,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -61,9 +62,18 @@ public class MainActivity extends AppCompatActivity
 
         SharedPreferences preferencias = getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, Context.MODE_PRIVATE);
 
-        preferencias.getString(SessionPrefs.PREF_USERNAME, null);
+        String authorization = "Bearer " + getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, MODE_PRIVATE).getString(SessionPrefs.PREF_USER_TOKEN, null);
+        String cedula = preferencias.getString(SessionPrefs.PREF_USERNAME, null);
+        String token = preferencias.getString(SessionPrefs.PREF_TOKEN_FIREBASE, null);
+        Context context = getApplicationContext();
 
-        FirebaseIDService.enviarDatosTokenFirebaseAServidor(preferencias.getString(SessionPrefs.PREF_USERNAME, null), preferencias.getString(SessionPrefs.PREF_TOKEN_FIREBASE, null), getApplicationContext());
+        Log.d("onCreate Main Activity", "Enviando token de dispositivo");
+        Log.d("cedula", cedula);
+        Log.d("token", token);
+
+        FirebaseIDService.enviarDatosTokenFirebaseAServidor(authorization, cedula, token, context);
+
+        Log.d("onCreate Main Activity", "Se envio token de dispositivo");
 
     }
 

@@ -38,8 +38,8 @@ public interface ApiInterface {
     @POST("admin/login/")
     Call<String> login(@Body LoginBody loginBody);
 
-    @POST("estudiante/token")
-    Call<String> enviarTokenFirebase(@Body TokenFirebaseBody tokenFirebaseBody);
+    @POST("estudiante/token/")
+    Call<String> enviarTokenFirebase(@Header("Authorization") String authorization, @Header("Content-Type") String contentType, @Body TokenFirebaseBody tokenFirebaseBody);
 
     @GET("director/carrera/")
     public Call<List<DtCarrera>> getAllCarreras(@Header("Authorization") String authorization);
