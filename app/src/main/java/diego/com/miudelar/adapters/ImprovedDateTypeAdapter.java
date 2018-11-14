@@ -1,4 +1,4 @@
-package diego.com.miudelar;
+package diego.com.miudelar.adapters;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

@@ -1,7 +1,8 @@
-package diego.com.miudelar;
+package diego.com.miudelar.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.design.widget.TextInputLayout;
@@ -21,6 +22,9 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
+import diego.com.miudelar.api.web.ApiClient;
+import diego.com.miudelar.api.web.ApiInterface;
+import diego.com.miudelar.services.FirebaseIDService;
 import diego.com.miudelar.data.api.model.LoginBody;
 import diego.com.miudelar.data.prefs.SessionPrefs;
 import diego.com.miudelar.R;
@@ -158,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             if (!(response.body().contains("Error"))){
 
-                                // Guardar token y userID en preferencias
+                                // Guardar token de sesion y userID en preferencias
                                 SessionPrefs.get(LoginActivity.this).guardarToken(response.body().toString(), userId);
 
                                 // Ir al menu principal (main activity)
@@ -167,14 +171,12 @@ public class LoginActivity extends AppCompatActivity {
                             else {
                                 String error = response.body().toString();
                                 showLoginError(error);
-                                return;
                             }
 
                         }else{
 
                             String error = "Error: Usuario o contraseña incorrecta";
                             showLoginError(error);
-                            return;
                         }
                     }
                     // Procesar errores
@@ -183,7 +185,6 @@ public class LoginActivity extends AppCompatActivity {
                         String error = response.body().toString();
 
                         showLoginError(error);
-                        return;
                     }
                 }
 

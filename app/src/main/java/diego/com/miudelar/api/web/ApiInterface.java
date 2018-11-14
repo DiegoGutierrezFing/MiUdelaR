@@ -1,4 +1,4 @@
-package diego.com.miudelar;
+package diego.com.miudelar.api.web;
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import diego.com.miudelar.data.api.model.InscripcionCarreraBody;
 import diego.com.miudelar.data.api.model.InscripcionCursoBody;
 import diego.com.miudelar.data.api.model.InscripcionExamenBody;
 import diego.com.miudelar.data.api.model.LoginBody;
+import diego.com.miudelar.data.api.model.TokenFirebaseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -36,6 +37,9 @@ public interface ApiInterface {
 
     @POST("admin/login/")
     Call<String> login(@Body LoginBody loginBody);
+
+    @POST("estudiante/token")
+    Call<String> enviarTokenFirebase(@Body TokenFirebaseBody tokenFirebaseBody);
 
     @GET("director/carrera/")
     public Call<List<DtCarrera>> getAllCarreras(@Header("Authorization") String authorization);

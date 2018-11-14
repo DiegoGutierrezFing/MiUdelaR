@@ -1,9 +1,10 @@
-package diego.com.miudelar;
+package diego.com.miudelar.api.web;
 
 import com.google.gson.GsonBuilder;
 
 import java.util.Date;
 
+import diego.com.miudelar.adapters.ImprovedDateTypeAdapter;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;

@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -16,8 +17,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- Set custom default icon. This is used when no icon is set for incoming notification messages.
+     See README(https://goo.gl/l4GJaQ) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_ic_notification" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+
         <activity
-            android:name="diego.com.miudelar.MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -28,7 +37,7 @@
         </activity>
 
         <activity
-            android:name="diego.com.miudelar.LoginActivity"
+            android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login">
             <!--<intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,52 +47,54 @@
         </activity>
 
         <activity
-            android:name="diego.com.miudelar.InscripcionACurso"
+            android:name=".activities.InscripcionACurso"
             android:label="Inscripcion a curso">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="diego.com.miudelar.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
 
         <activity
-            android:name="diego.com.miudelar.InscripcionACarrera"
+            android:name=".activities.InscripcionACarrera"
             android:label="Inscripcion a carrera">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="diego.com.miudelar.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
 
         <activity
-            android:name="diego.com.miudelar.InscripcionAExamen"
+            android:name=".activities.InscripcionAExamen"
             android:label="Inscripcion a examen">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="diego.com.miudelar.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
 
         <activity
-            android:name="diego.com.miudelar.ResultadoCursos"
+            android:name=".activities.ResultadoCursos"
             android:label="Consultar calificaciones de cursos">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="diego.com.miudelar.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
 
         <activity
-            android:name="diego.com.miudelar.ResultadoExamenes"
+            android:name=".activities.ResultadoExamenes"
             android:label="Consultar calificaciones de exámenes">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="diego.com.miudelar.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
 
-        <service android:name=".MyFirebaseMessagingService">
+        <service android:name=".services.MyFirebaseMessagingService"
+            android:permission="com.google.android.c2dm.perission.SEND">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
 
-        <service android:name=".FirebaseIDService">
+        <service android:name=".services.FirebaseIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>

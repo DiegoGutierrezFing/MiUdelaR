@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     android:id="@+id/nav_resultados_cursos_layout"
-    tools:context="diego.com.miudelar.ResultadoCursos">
+    tools:context=".activities.ResultadoCursos">
 
     <TextView
         android:layout_width="match_parent"

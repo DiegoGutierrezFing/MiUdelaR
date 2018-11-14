@@ -1,4 +1,4 @@
-package diego.com.miudelar;
+package diego.com.miudelar.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,9 +14,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import diego.com.miudelar.api.web.ApiClient;
+import diego.com.miudelar.api.web.ApiInterface;
 import diego.com.miudelar.data.api.model.DtCalificaciones;
 import diego.com.miudelar.data.api.model.DtEstudiante_Examen;
 import diego.com.miudelar.data.prefs.SessionPrefs;
@@ -170,7 +173,7 @@ public class ResultadoExamenes extends AppCompatActivity {
             nombreCarrera.setText("Carrera: " + lista.get(position).getExamen().getAsignatura_Carrera().getCarrera().getNombre());
 
             TextView fechaCurso = (TextView) row.findViewById(R.id.fechaExamen);
-            fechaCurso.setText("Fecha del examen: " + lista.get(position).getExamen().getFecha().toString());
+            fechaCurso.setText("Fecha del examen: " + new SimpleDateFormat("dd/MM/yyyy").format(lista.get(position).getExamen().getFecha()));
 
             TextView calificacion = (TextView) row.findViewById(R.id.calificacionExamen);
             calificacion.setText("Calificación: " + lista.get(position).getCalificacion().toString());

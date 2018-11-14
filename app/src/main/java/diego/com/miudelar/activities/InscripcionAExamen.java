@@ -1,8 +1,9 @@
-package diego.com.miudelar;
+package diego.com.miudelar.activities;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,8 +18,11 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
+import diego.com.miudelar.api.web.ApiClient;
+import diego.com.miudelar.api.web.ApiInterface;
 import diego.com.miudelar.data.api.model.DtExamen;
 import diego.com.miudelar.data.api.model.InscripcionExamenBody;
 import diego.com.miudelar.data.prefs.SessionPrefs;
@@ -117,7 +121,7 @@ public class InscripcionAExamen extends AppCompatActivity {
 
         spinnerExamenes = (Spinner) findViewById(R.id.examenes);
 
-        DtExamen dtExamen;
+        final DtExamen dtExamen;
 
         if(spinnerExamenes != null && spinnerExamenes.getSelectedItem() !=null ) {
 
@@ -148,11 +152,32 @@ public class InscripcionAExamen extends AppCompatActivity {
                                                 Log.i("Snackbar", "Pulsada acción snackbar!");
                                             }
                                         }).show();
+
+                                //Crear evento en el calendario
+                                Intent calIntent = new Intent(Intent.ACTION_INSERT);
+                                calIntent.setType("vnd.android.cursor.item/event");
+                                calIntent.putExtra(CalendarContract.Events.TITLE, "Exámen");
+                                calIntent.putExtra(CalendarContract.Events.DESCRIPTION, "Exámen de la asignatura " + dtExamen.getAsignatura_Carrera().getAsignatura().getNombre());
+
+                                GregorianCalendar calDate = new GregorianCalendar(dtExamen.getFecha().getYear(), dtExamen.getFecha().getMonth(), dtExamen.getFecha().getDay());
+                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME,
+                                        calDate.getTimeInMillis());
+                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
+                                        calDate.getTimeInMillis());
+
+                                startActivity(calIntent);
                             }
                             else {
-                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_examen_layout), response.body(), Snackbar.LENGTH_LONG).show();
+                                Snackbar snackbar = Snackbar.make(findViewById(R.id.nav_inscripcion_a_examen_layout), response.body(), Snackbar.LENGTH_LONG);
+                                View snackbarView = snackbar.getView();
+                                TextView snackTextView = (TextView) snackbarView
+                                        .findViewById(android.support.design.R.id.snackbar_text);
+                                snackTextView.setMaxLines(2);
+                                snackbar.show();
+
                                 // Ir al menu principal (main activity)
-                                irAMenuPrincipal();
+                                //irAMenuPrincipal();
                             }
 
                         } else {

@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "678314487087",
-    "firebase_url": "https://prueba-de-firebase-f8b28.firebaseio.com",
-    "project_id": "prueba-de-firebase-f8b28",
-    "storage_bucket": "prueba-de-firebase-f8b28.appspot.com"
+    "project_number": "368818422891",
+    "firebase_url": "https://miudelar-7230c.firebaseio.com",
+    "project_id": "miudelar-7230c",
+    "storage_bucket": "miudelar-7230c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:678314487087:android:6168e2b78e481060",
+        "mobilesdk_app_id": "1:368818422891:android:6168e2b78e481060",
         "android_client_info": {
           "package_name": "diego.com.miudelar"
         }
       },
       "oauth_client": [
         {
-          "client_id": "678314487087-gfv33muvs46cchrk9pdmo9qjhdsqjjlv.apps.googleusercontent.com",
+          "client_id": "368818422891-eu1hbnmc6g4fe1hqm84k0jd17mg5jipk.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDF-PxrK3DfSKIG-Rma4WzC_lhMe-NzLCI"
+          "current_key": "AIzaSyCvdVWobrcAdombYWsD0h9XorlzBg5A9Sk"
         }
       ],
       "services": {

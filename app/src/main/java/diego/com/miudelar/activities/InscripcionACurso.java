@@ -1,8 +1,9 @@
-package diego.com.miudelar;
+package diego.com.miudelar.activities;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,8 +18,11 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
+import diego.com.miudelar.api.web.ApiClient;
+import diego.com.miudelar.api.web.ApiInterface;
 import diego.com.miudelar.data.api.model.DtCurso;
 import diego.com.miudelar.data.api.model.InscripcionCursoBody;
 import diego.com.miudelar.data.prefs.SessionPrefs;
@@ -124,7 +128,7 @@ public class InscripcionACurso extends AppCompatActivity {
 
         spinnerCursos = (Spinner) findViewById(R.id.cursos);
 
-        DtCurso dtCurso;
+        final DtCurso dtCurso;
 
         if(spinnerCursos != null && spinnerCursos.getSelectedItem() !=null ) {
 
@@ -148,7 +152,7 @@ public class InscripcionACurso extends AppCompatActivity {
                             // Mostrar mensaje de que se tuvo exito en la inscripcion
                             //Toast.makeText(InscripcionACurso.this, response.body().toString(), Toast.LENGTH_SHORT).show();
                             if (response.body().contains("OK")) {
-                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_carrera_layout), "Inscripción a curso exitosa!", Snackbar.LENGTH_LONG)
+                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_curso_layout), "Inscripción a curso exitosa!", Snackbar.LENGTH_LONG)
                                         .setActionTextColor(getResources().getColor(R.color.snackbar_action))
                                         .setAction("Aceptar", new View.OnClickListener() {
                                             @Override
@@ -156,12 +160,33 @@ public class InscripcionACurso extends AppCompatActivity {
                                                 Log.i("Snackbar", "Pulsada acción snackbar!");
                                             }
                                         }).show();
+
+                                //Crear evento en el calendario
+                                Intent calIntent = new Intent(Intent.ACTION_INSERT);
+                                calIntent.setType("vnd.android.cursor.item/event");
+                                calIntent.putExtra(CalendarContract.Events.TITLE, "Curso");
+                                calIntent.putExtra(CalendarContract.Events.DESCRIPTION, "Inicio de curso de la asignatura " + dtCurso.getAsignatura_Carrera().getAsignatura().getNombre());
+
+                                GregorianCalendar calDate = new GregorianCalendar(dtCurso.getFecha().getYear(), dtCurso.getFecha().getMonth(), dtCurso.getFecha().getDay());
+                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME,
+                                        calDate.getTimeInMillis());
+                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
+                                        calDate.getTimeInMillis());
+
+                                startActivity(calIntent);
                             }
                             else {
+                                //Toast.makeText(InscripcionACurso.this, response.body(), Toast.LENGTH_SHORT).show();
+                                Snackbar snackbar = Snackbar.make(findViewById(R.id.nav_inscripcion_a_curso_layout), response.body(), Snackbar.LENGTH_LONG);
+                                View snackbarView = snackbar.getView();
+                                TextView snackTextView = (TextView) snackbarView
+                                        .findViewById(android.support.design.R.id.snackbar_text);
+                                snackTextView.setMaxLines(2);
+                                snackbar.show();
 
-                                Toast.makeText(InscripcionACurso.this, response.body(), Toast.LENGTH_SHORT).show();
                                 // Ir al menu principal (main activity)
-                                irAMenuPrincipal();
+                                //irAMenuPrincipal();
                             }
 
                         } else {

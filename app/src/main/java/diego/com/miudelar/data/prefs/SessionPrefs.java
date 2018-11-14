@@ -14,6 +14,7 @@ public class SessionPrefs {
     public static final String PREFS_NAME = "MIUDELAR_PREFS";
     public static final String PREF_USER_TOKEN = "PREF_USER_TOKEN";
     public static final String PREF_USERNAME = "PREF_USERNAME";
+    public static final String PREF_TOKEN_FIREBASE = "PREF_TOKEN_FIREBASE";
 
     private SharedPreferences mPrefs;
 
@@ -56,6 +57,7 @@ public class SessionPrefs {
         SharedPreferences.Editor editor = mPrefs.edit();
         editor.putString(PREF_USER_TOKEN, null);
         editor.putString(PREF_USERNAME, null);
+        editor.putString(PREF_TOKEN_FIREBASE, null);
         editor.apply();
     }
 

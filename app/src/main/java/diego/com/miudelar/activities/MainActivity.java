@@ -1,4 +1,4 @@
-package diego.com.miudelar;
+package diego.com.miudelar.activities;
 
 /*import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +14,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;*/
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,6 +30,7 @@ import android.view.MenuItem;
 
 import diego.com.miudelar.data.prefs.SessionPrefs;
 import diego.com.miudelar.R;
+import diego.com.miudelar.services.FirebaseIDService;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -55,6 +58,12 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        SharedPreferences preferencias = getApplicationContext().getSharedPreferences(SessionPrefs.PREFS_NAME, Context.MODE_PRIVATE);
+
+        preferencias.getString(SessionPrefs.PREF_USERNAME, null);
+
+        FirebaseIDService.enviarDatosTokenFirebaseAServidor(preferencias.getString(SessionPrefs.PREF_USERNAME, null), preferencias.getString(SessionPrefs.PREF_TOKEN_FIREBASE, null), getApplicationContext());
 
     }
 

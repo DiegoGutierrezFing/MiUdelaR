@@ -1,4 +1,4 @@
-package diego.com.miudelar;
+package diego.com.miudelar.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import diego.com.miudelar.api.web.ApiClient;
+import diego.com.miudelar.api.web.ApiInterface;
 import diego.com.miudelar.data.api.model.DtCarrera;
 import diego.com.miudelar.data.api.model.InscripcionCarreraBody;
 import diego.com.miudelar.data.prefs.SessionPrefs;
@@ -170,9 +172,17 @@ public class InscripcionACarrera extends AppCompatActivity {
                                         }).show();
                             }
                             else {
-                                Toast.makeText(InscripcionACarrera.this, response.body(), Toast.LENGTH_SHORT).show();
-                            // Ir al menu principal (main activity)
-                            irAMenuPrincipal();
+                                //Toast.makeText(InscripcionACarrera.this, response.body(), Toast.LENGTH_SHORT).show();
+                                Log.i("Response: ", response.body());
+                                Snackbar snackbar = Snackbar.make(findViewById(R.id.nav_inscripcion_a_carrera_layout), response.body(), Snackbar.LENGTH_LONG);
+                                View snackbarView = snackbar.getView();
+                                TextView snackTextView = (TextView) snackbarView
+                                        .findViewById(android.support.design.R.id.snackbar_text);
+                                snackTextView.setMaxLines(2);
+                                snackbar.show();
+
+                                // Ir al menu principal (main activity)
+                                //irAMenuPrincipal();
                             }
 
                         } else {

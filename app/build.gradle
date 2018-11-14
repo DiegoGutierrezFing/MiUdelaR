@@ -40,5 +40,7 @@ dependencies {
 
     compile 'com.google.firebase:firebase-core:9.2.0'       // this line must be included to integrate with Firebase
     compile 'com.google.firebase:firebase-messaging:9.2.0'  // this line must be included to use FCM
+    //compile 'com.google.firebase:firebase-core:16.0.1'
+
 }
 apply plugin: 'com.google.gms.google-services'
