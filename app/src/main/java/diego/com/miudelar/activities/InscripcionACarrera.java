@@ -1,9 +1,11 @@
 package diego.com.miudelar.activities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -173,13 +175,14 @@ public class InscripcionACarrera extends AppCompatActivity {
                             }
                             else {
                                 //Toast.makeText(InscripcionACarrera.this, response.body(), Toast.LENGTH_SHORT).show();
-                                Log.i("Response: ", response.body());
+                                /*Log.i("Response: ", response.body());
                                 Snackbar snackbar = Snackbar.make(findViewById(R.id.nav_inscripcion_a_carrera_layout), response.body(), Snackbar.LENGTH_LONG);
                                 View snackbarView = snackbar.getView();
                                 TextView snackTextView = (TextView) snackbarView
                                         .findViewById(android.support.design.R.id.snackbar_text);
                                 snackTextView.setMaxLines(2);
-                                snackbar.show();
+                                snackbar.show();*/
+                                mostrarDialogo(response.body().toString());
 
                                 // Ir al menu principal (main activity)
                                 //irAMenuPrincipal();
@@ -187,30 +190,34 @@ public class InscripcionACarrera extends AppCompatActivity {
 
                         } else {
                             Log.i("response.body", response.body());
-                            Toast.makeText(InscripcionACarrera.this, "Error: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
-                            irAMenuPrincipal();
+                            //Toast.makeText(InscripcionACarrera.this, "Error: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
+                            mostrarDialogo("Error: respuesta del servidor vacia");
+                            //irAMenuPrincipal();
                         }
                     }
                     // Procesar errores
                     else {
                         Log.i("response.body", response.body());
-                        Toast.makeText(InscripcionACarrera.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
-                        irAMenuPrincipal();
+                        //Toast.makeText(InscripcionACarrera.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                        mostrarDialogo("Error: no se ha podido recibir respuesta del servidor.");
+                        //irAMenuPrincipal();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
 
-                    Toast.makeText(InscripcionACarrera.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
-                    irAMenuPrincipal();
+                    //Toast.makeText(InscripcionACarrera.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
+                    mostrarDialogo("Error: No fue posible contactar con el servidor");
+                    //irAMenuPrincipal();
                 }
             });
 
 
         } else  {
-            Toast.makeText(InscripcionACarrera.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
-            irAMenuPrincipal();
+            //Toast.makeText(InscripcionACarrera.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
+            mostrarDialogo("Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento");
+            //irAMenuPrincipal();
         }
     }
 
@@ -259,6 +266,21 @@ public class InscripcionACarrera extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    private void mostrarDialogo(String texto) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(InscripcionACarrera.this, R.style.Dialog);
+
+        builder.setMessage(texto)
+                .setTitle("Información")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        irAMenuPrincipal();
+                    }
+                });
+
+        builder.create().show();
     }
 
 }

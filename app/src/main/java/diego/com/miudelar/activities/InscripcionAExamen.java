@@ -1,10 +1,12 @@
 package diego.com.miudelar.activities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -111,7 +113,7 @@ public class InscripcionAExamen extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<DtExamen>> call, Throwable t) {
 
-                Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se realizaba la peticion", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se realizaba la petición", Toast.LENGTH_LONG).show();
                 irAMenuPrincipal();
             }
         });
@@ -169,41 +171,45 @@ public class InscripcionAExamen extends AppCompatActivity {
                                 startActivity(calIntent);
                             }
                             else {
-                                Snackbar snackbar = Snackbar.make(findViewById(R.id.nav_inscripcion_a_examen_layout), response.body(), Snackbar.LENGTH_LONG);
+                                /*Snackbar snackbar = Snackbar.make(findViewById(R.id.nav_inscripcion_a_examen_layout), response.body(), Snackbar.LENGTH_LONG);
                                 View snackbarView = snackbar.getView();
                                 TextView snackTextView = (TextView) snackbarView
                                         .findViewById(android.support.design.R.id.snackbar_text);
                                 snackTextView.setMaxLines(2);
-                                snackbar.show();
-
+                                snackbar.show();*/
+                                mostrarDialogo(response.body().toString());
                                 // Ir al menu principal (main activity)
                                 //irAMenuPrincipal();
                             }
 
                         } else {
-                            Toast.makeText(InscripcionAExamen.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
-                            irAMenuPrincipal();
+                            //Toast.makeText(InscripcionAExamen.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
+                            mostrarDialogo("Error desconocido: respuesta del servidor vacia");
+                            //irAMenuPrincipal();
                         }
                     }
                     // Procesar errores
                     else {
-                        Toast.makeText(InscripcionAExamen.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(InscripcionAExamen.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
                         Log.i("Body error", response.errorBody().toString());
-                        irAMenuPrincipal();
+                        mostrarDialogo("Error desconocido: no se ha podido recibir respuesta del servidor.");
+                        //irAMenuPrincipal();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    Toast.makeText(InscripcionAExamen.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(InscripcionAExamen.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
+                    mostrarDialogo("Error: No fue posible contactar con el servidor");
                     t.printStackTrace();
-                    irAMenuPrincipal();
+                    //irAMenuPrincipal();
                 }
             });
 
         } else  {
-            Toast.makeText(InscripcionAExamen.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
-            irAMenuPrincipal();
+            //Toast.makeText(InscripcionAExamen.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
+            mostrarDialogo("Error: No se han cargado elementos en la lista de exámenes o no se ha seleccionado ningun elemento");
+            //irAMenuPrincipal();
         }
     }
 
@@ -266,6 +272,21 @@ public class InscripcionAExamen extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    private void mostrarDialogo(String texto) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(InscripcionAExamen.this, R.style.Dialog);
+
+        builder.setMessage(texto)
+                .setTitle("Información")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        irAMenuPrincipal();
+                    }
+                });
+
+        builder.create().show();
     }
 
 }

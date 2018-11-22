@@ -1,11 +1,15 @@
 package diego.com.miudelar.activities;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -178,41 +182,47 @@ public class InscripcionACurso extends AppCompatActivity {
                             }
                             else {
                                 //Toast.makeText(InscripcionACurso.this, response.body(), Toast.LENGTH_SHORT).show();
+
+                                mostrarDialogo(response.body().toString());
+                                /*
                                 Snackbar snackbar = Snackbar.make(findViewById(R.id.nav_inscripcion_a_curso_layout), response.body(), Snackbar.LENGTH_LONG);
                                 View snackbarView = snackbar.getView();
                                 TextView snackTextView = (TextView) snackbarView
                                         .findViewById(android.support.design.R.id.snackbar_text);
                                 snackTextView.setMaxLines(2);
-                                snackbar.show();
+                                snackbar.show();*/
 
                                 // Ir al menu principal (main activity)
                                 //irAMenuPrincipal();
                             }
 
                         } else {
-                            Toast.makeText(InscripcionACurso.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
-                            irAMenuPrincipal();
+                            //Toast.makeText(InscripcionACurso.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
+                            mostrarDialogo("Error desconocido: respuesta del servidor vacia");
+                            //irAMenuPrincipal();
                         }
                     }
                     // Procesar errores
                     else {
-                        Toast.makeText(InscripcionACurso.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(InscripcionACurso.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+                        mostrarDialogo("Error desconocido: no se ha podido recibir respuesta del servidor.");
                         Log.i("Body error", response.errorBody().toString());
-                        irAMenuPrincipal();
+                        //irAMenuPrincipal();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    Toast.makeText(InscripcionACurso.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
-                    t.printStackTrace();
-                    irAMenuPrincipal();
+                    //Toast.makeText(InscripcionACurso.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
+                    mostrarDialogo("Error: No fue posible contactar con el servidor");
+                    //irAMenuPrincipal();
                 }
             });
 
         } else  {
-            Toast.makeText(InscripcionACurso.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
-            irAMenuPrincipal();
+            //Toast.makeText(InscripcionACurso.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
+            mostrarDialogo("Error: No se han cargado elementos en la lista de cursos o no se ha seleccionado ningun elemento");
+            //irAMenuPrincipal();
         }
     }
 
@@ -275,5 +285,20 @@ public class InscripcionACurso extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    private void mostrarDialogo(String texto) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(InscripcionACurso.this, R.style.Dialog);
+
+        builder.setMessage(texto)
+                .setTitle("Información")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                        irAMenuPrincipal();
+                    }
+                });
+
+        builder.create().show();
     }
 }
