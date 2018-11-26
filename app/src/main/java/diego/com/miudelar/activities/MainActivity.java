@@ -67,9 +67,9 @@ public class MainActivity extends AppCompatActivity
         String token = preferencias.getString(SessionPrefs.PREF_TOKEN_FIREBASE, null);
         Context context = getApplicationContext();
 
-        Log.d("onCreate Main Activity", "Enviando token de dispositivo");
-        Log.d("cedula", cedula);
-        Log.d("token", token);
+        //Log.d("onCreate Main Activity", "Enviando token de dispositivo");
+        //Log.d("cedula", cedula);
+        //Log.d("token", token);
 
         FirebaseIDService.enviarDatosTokenFirebaseAServidor(authorization, cedula, token, context);
 

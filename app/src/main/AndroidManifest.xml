@@ -28,27 +28,27 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".activities.LoginActivity"
-            android:label="@string/title_activity_login">
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            android:label="@string/title_activity_login"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
         </activity>
 
         <activity
             android:name=".activities.InscripcionACurso"
-            android:label="Inscripcion a curso">
+            android:label="Inscripcion a curso"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
@@ -56,7 +56,9 @@
 
         <activity
             android:name=".activities.InscripcionACarrera"
-            android:label="Inscripcion a carrera">
+            android:label="Inscripcion a carrera"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
@@ -64,7 +66,9 @@
 
         <activity
             android:name=".activities.InscripcionAExamen"
-            android:label="Inscripcion a examen">
+            android:label="Inscripcion a examen"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
@@ -72,7 +76,9 @@
 
         <activity
             android:name=".activities.ResultadoCursos"
-            android:label="Consultar calificaciones de cursos">
+            android:label="Consultar calificaciones de cursos"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />
@@ -80,7 +86,9 @@
 
         <activity
             android:name=".activities.ResultadoExamenes"
-            android:label="Consultar calificaciones de exámenes">
+            android:label="Consultar calificaciones de exámenes"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity" />

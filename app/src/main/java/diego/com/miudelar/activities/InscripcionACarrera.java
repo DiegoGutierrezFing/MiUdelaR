@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -62,6 +63,9 @@ public class InscripcionACarrera extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
 
+        // Ajustar teclado software (soft-keyboard) para que no mueva los elementos de la pantalla cuando aparezca
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
         spinnerCarreras = (Spinner) findViewById(R.id.carreras);
         tituloListaCarreras = (TextView) findViewById(R.id.tituloListaCarreras);
         descripcion = (TextView) findViewById(R.id.descripcion);
@@ -96,9 +100,9 @@ public class InscripcionACarrera extends AppCompatActivity {
                         List<DtCarrera> carreras = new ArrayList<DtCarrera>();
                         carreras = response.body();
 
-                        ArrayAdapter<DtCarrera> adapter = new MiAdaptador(InscripcionACarrera.this, R.layout.list_item_carrera, carreras);
+                        ArrayAdapter<DtCarrera> adapter = new MiAdaptador(InscripcionACarrera.this, R.layout.item_carrera, carreras);
 
-                        adapter.setDropDownViewResource(R.layout.list_item_carrera);
+                        adapter.setDropDownViewResource(R.layout.item_carrera);
 
                         spinnerCarreras.setAdapter(adapter);
 
@@ -248,7 +252,7 @@ public class InscripcionACarrera extends AppCompatActivity {
 
             LayoutInflater inflater=getLayoutInflater();
 
-            View row = inflater.inflate(R.layout.list_item_carrera, parent, false);
+            View row = inflater.inflate(R.layout.item_carrera, parent, false);
 
             TextView idCarrera = (TextView)row.findViewById(R.id.codigoCarrera);
 

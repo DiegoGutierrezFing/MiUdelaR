@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:textAlignment="center"
     android:id="@+id/nav_inscripcion_a_examen_layout"
-    tools:context=".activities.InscripcionAExamen">
+    tools:context=".activities.InscripcionAExamen"
+    android:weightSum="1">
 
     <TextView
         android:id="@+id/descripcion"
@@ -24,21 +27,36 @@
         android:id="@+id/tituloListaExamenes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Examenes"
+        android:text="Listado de examenes disponibles"
         android:textSize="20dp"
         android:layout_below="@+id/descripcion"
         android:layout_centerHorizontal="true"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_gravity="center_horizontal" />
 
-    <Spinner
-        android:id="@+id/examenes"
+    <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="18dp"
-        android:spinnerMode="dropdown"
-        android:theme="@style/spinnerTheme"
-        android:layout_below="@+id/tituloListaExamenes"
-        android:layout_alignParentStart="true" />
+        android:id="@+id/progressBar"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal" />
+
+    <EditText
+        android:drawableLeft="@drawable/buscar_24dp"
+        android:id="@+id/etSearch"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre de la asignatura a buscar" />
+
+    <ListView
+        android:id="@+id/lvExamenes"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:choiceMode="singleChoice"
+        android:listSelector="@android:color/darker_gray"
+        android:layout_weight="0.54"
+        android:padding="5dp" />
 
     <Button
         android:id="@+id/botonConfirmar"
@@ -52,13 +70,7 @@
         android:onClick="onClickConfirmar"
         android:layout_below="@+id/examenes"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/estilo_boton" />
+        android:background="@drawable/estilo_boton"
+        android:layout_gravity="center_horizontal" />
 
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/progressBar"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
-</RelativeLayout>
+</LinearLayout>

@@ -1,22 +1,28 @@
 package diego.com.miudelar.activities;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.CalendarContract;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ContextThemeWrapper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +44,6 @@ import retrofit2.Response;
 public class InscripcionACurso extends AppCompatActivity {
 
     private View mProgressView;
-    private Spinner spinnerCursos;
     private TextView descripcion;
     private TextView tituloListaCursos;
     private Button botonConfirmar;
@@ -49,6 +54,14 @@ public class InscripcionACurso extends AppCompatActivity {
 
     private ApiInterface apiService;
     private String url;
+
+    private EditText etSearch;
+    private ListView lvCursos;
+
+    private List<DtCurso> mDtCursoArrayList = new ArrayList<DtCurso>();
+    private DtCurso dtCursoSeleccionado;
+
+    private MiAdaptador adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +78,38 @@ public class InscripcionACurso extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        spinnerCursos = (Spinner) findViewById(R.id.cursos);
+        // Ajustar teclado software (soft-keyboard) para que no mueva los elementos de la pantalla cuando aparezca
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+
         tituloListaCursos = (TextView) findViewById(R.id.tituloListaCursos);
         descripcion = (TextView) findViewById(R.id.descripcion);
         botonConfirmar = (Button) findViewById(R.id.botonConfirmar);
         mProgressView = findViewById(R.id.progressBar);
+
+        etSearch = (EditText) findViewById(R.id.etSearch);
+
+        // Establecer color de hint (texto de sugerencia) para el EditText
+        etSearch.setHintTextColor(Color.LTGRAY);
+
+        lvCursos = (ListView)findViewById(R.id.lvCursos);
+
+        // Agregar Text Change Listener a EditText
+        etSearch.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Call back the Adapter with current character to Filter
+                adapter.getFilter().filter(s.toString());
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
         try {
             url = ApiClient.getProperty("urlServidor",getApplicationContext());
@@ -95,14 +135,12 @@ public class InscripcionACurso extends AppCompatActivity {
 
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        List<DtCurso> cursos = new ArrayList<DtCurso>();
-                        cursos = response.body();
 
-                        ArrayAdapter<DtCurso> adapter = new MiAdaptador(InscripcionACurso.this, R.layout.curso_item, cursos);
+                        mDtCursoArrayList = response.body();
 
-                        adapter.setDropDownViewResource(R.layout.curso_item);
+                        adapter = new MiAdaptador(InscripcionACurso.this, mDtCursoArrayList);
 
-                        spinnerCursos.setAdapter(adapter);
+                        lvCursos.setAdapter(adapter);
 
                         showProgress(false);
 
@@ -111,9 +149,7 @@ public class InscripcionACurso extends AppCompatActivity {
                         irAMenuPrincipal();
                     }
                 } else {
-
                     Toast.makeText(InscripcionACurso.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
-                    Log.i("Body error", response.errorBody().toString());
                     irAMenuPrincipal();
                 }
             }
@@ -122,7 +158,6 @@ public class InscripcionACurso extends AppCompatActivity {
             public void onFailure(Call<List<DtCurso>> call, Throwable t) {
 
                 Toast.makeText(getApplicationContext(), "Ha ocurrido un error mientras se realizaba la peticion", Toast.LENGTH_LONG).show();
-                t.printStackTrace();
                 irAMenuPrincipal();
             }
         });
@@ -130,15 +165,14 @@ public class InscripcionACurso extends AppCompatActivity {
 
     public void onClickConfirmar(View view){
 
-        spinnerCursos = (Spinner) findViewById(R.id.cursos);
+        lvCursos = (ListView) findViewById(R.id.lvCursos);
 
         final DtCurso dtCurso;
 
-        if(spinnerCursos != null && spinnerCursos.getSelectedItem() !=null ) {
+        if(lvCursos != null && dtCursoSeleccionado !=null ) {
 
-            dtCurso= (DtCurso) spinnerCursos.getSelectedItem();
+            dtCurso = dtCursoSeleccionado;
 
-            //Toast.makeText(InscripcionACurso.this, "Curso seleccionado: " + dtCurso.getId(), Toast.LENGTH_SHORT).show();
             Toast.makeText(InscripcionACurso.this, "Realizando inscripción: Espere...", Toast.LENGTH_SHORT).show();
 
             apiService = ApiClient.getClient(url).create(ApiInterface.class);
@@ -152,77 +186,65 @@ public class InscripcionACurso extends AppCompatActivity {
                     if (response.isSuccessful()){
                         if (response.body() != null){
 
-                            //if (!(response.body().toString().contains("Error"))){
                             // Mostrar mensaje de que se tuvo exito en la inscripcion
-                            //Toast.makeText(InscripcionACurso.this, response.body().toString(), Toast.LENGTH_SHORT).show();
                             if (response.body().contains("OK")) {
-                                Snackbar.make(findViewById(R.id.nav_inscripcion_a_curso_layout), "Inscripción a curso exitosa!", Snackbar.LENGTH_LONG)
-                                        .setActionTextColor(getResources().getColor(R.color.snackbar_action))
-                                        .setAction("Aceptar", new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                Log.i("Snackbar", "Pulsada acción snackbar!");
+
+                                AlertDialog.Builder builder = new AlertDialog.Builder(InscripcionACurso.this, R.style.Dialog);
+
+                                builder.setMessage("Se ha completado la inscripción con éxito. Al pulsar Ok, se agregará un evento en el calendario para recordarle el inicio del curso.")
+                                        .setTitle("Información")
+                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.cancel();
+
+                                                //Crear evento en el calendario
+                                                Intent calIntent = new Intent(Intent.ACTION_INSERT);
+                                                calIntent.setType("vnd.android.cursor.item/event");
+                                                calIntent.putExtra(CalendarContract.Events.TITLE, "Curso: " + dtCurso.getAsignatura_Carrera().getAsignatura().getNombre());
+                                                calIntent.putExtra(CalendarContract.Events.DESCRIPTION, "Inicio de curso de la asignatura " + dtCurso.getAsignatura_Carrera().getAsignatura().getNombre());
+
+                                                GregorianCalendar calDate = new GregorianCalendar(dtCurso.getFecha().getYear(), dtCurso.getFecha().getMonth(), dtCurso.getFecha().getDay());
+                                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+                                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME,
+                                                        calDate.getTimeInMillis());
+                                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
+                                                        calDate.getTimeInMillis());
+
+                                                startActivity(calIntent);
                                             }
-                                        }).show();
+                                        });
 
-                                //Crear evento en el calendario
-                                Intent calIntent = new Intent(Intent.ACTION_INSERT);
-                                calIntent.setType("vnd.android.cursor.item/event");
-                                calIntent.putExtra(CalendarContract.Events.TITLE, "Curso");
-                                calIntent.putExtra(CalendarContract.Events.DESCRIPTION, "Inicio de curso de la asignatura " + dtCurso.getAsignatura_Carrera().getAsignatura().getNombre());
+                                builder.create().show();
 
-                                GregorianCalendar calDate = new GregorianCalendar(dtCurso.getFecha().getYear(), dtCurso.getFecha().getMonth(), dtCurso.getFecha().getDay());
-                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
-                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME,
-                                        calDate.getTimeInMillis());
-                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
-                                        calDate.getTimeInMillis());
-
-                                startActivity(calIntent);
                             }
                             else {
-                                //Toast.makeText(InscripcionACurso.this, response.body(), Toast.LENGTH_SHORT).show();
 
                                 mostrarDialogo(response.body().toString());
-                                /*
-                                Snackbar snackbar = Snackbar.make(findViewById(R.id.nav_inscripcion_a_curso_layout), response.body(), Snackbar.LENGTH_LONG);
-                                View snackbarView = snackbar.getView();
-                                TextView snackTextView = (TextView) snackbarView
-                                        .findViewById(android.support.design.R.id.snackbar_text);
-                                snackTextView.setMaxLines(2);
-                                snackbar.show();*/
-
-                                // Ir al menu principal (main activity)
-                                //irAMenuPrincipal();
                             }
 
                         } else {
-                            //Toast.makeText(InscripcionACurso.this, "Error desconocido: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
+
                             mostrarDialogo("Error desconocido: respuesta del servidor vacia");
-                            //irAMenuPrincipal();
                         }
                     }
                     // Procesar errores
                     else {
-                        //Toast.makeText(InscripcionACurso.this, "Error desconocido: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
+
                         mostrarDialogo("Error desconocido: no se ha podido recibir respuesta del servidor.");
                         Log.i("Body error", response.errorBody().toString());
-                        //irAMenuPrincipal();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<String> call, Throwable t) {
-                    //Toast.makeText(InscripcionACurso.this, "Error: No fue posible contactar con el servidor", Toast.LENGTH_SHORT).show();
+
                     mostrarDialogo("Error: No fue posible contactar con el servidor");
-                    //irAMenuPrincipal();
                 }
             });
 
         } else  {
-            //Toast.makeText(InscripcionACurso.this, "Error: No se han cargado elementos en la lista de carreras o no se ha seleccionado ningun elemento", Toast.LENGTH_SHORT).show();
+
             mostrarDialogo("Error: No se han cargado elementos en la lista de cursos o no se ha seleccionado ningun elemento");
-            //irAMenuPrincipal();
         }
     }
 
@@ -233,52 +255,13 @@ public class InscripcionACurso extends AppCompatActivity {
         tituloListaCursos.setVisibility(visibility);
         botonConfirmar.setVisibility(visibility);
         descripcion.setVisibility(visibility);
-        spinnerCursos.setVisibility(visibility);
+        etSearch.setVisibility(visibility);
+        lvCursos.setVisibility(visibility);
     }
 
     private void irAMenuPrincipal() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
-    }
-
-    private class MiAdaptador extends ArrayAdapter<DtCurso> {
-
-        List<DtCurso> cursos = new ArrayList<>();
-
-        public MiAdaptador(Context context, int resource, List<DtCurso> objects) {
-            super(context, resource, objects);
-            cursos = objects;
-        }
-
-        public View getDropDownView(int position, View convertView,ViewGroup parent) {
-            return getCustomView(position, convertView, parent);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            return getCustomView(position, convertView, parent);
-        }
-
-        public View getCustomView(int position, View convertView, ViewGroup parent) {
-
-            LayoutInflater inflater=getLayoutInflater();
-
-            View row = inflater.inflate(R.layout.curso_item, parent, false);
-
-            TextView idCurso = (TextView)row.findViewById(R.id.codigoCurso);
-
-            idCurso.setText("Código de curso: " + cursos.get(position).getId().toString());
-
-            TextView nombreAsignatura = (TextView)row.findViewById(R.id.nombreCurso);
-
-            nombreAsignatura.setText("Asignatura: " + cursos.get(position).getAsignatura_Carrera().getAsignatura().getNombre());
-
-            TextView nombreCarrera = (TextView)row.findViewById(R.id.carreraCurso);
-
-            nombreCarrera.setText("Carrera: " + cursos.get(position).getAsignatura_Carrera().getCarrera().getNombre());
-
-            return row;
-        }
     }
 
     @Override
@@ -300,5 +283,132 @@ public class InscripcionACurso extends AppCompatActivity {
                 });
 
         builder.create().show();
+    }
+
+    public class MiAdaptador extends BaseAdapter implements Filterable {
+
+        private List<DtCurso> mOriginalValues;     // Valores originales
+        private List<DtCurso> mDisplayedValues;    // Valores a mostrar despues de filtrar
+        LayoutInflater inflater;
+
+        public MiAdaptador(Context context, List<DtCurso> mProductArrayList) {
+            this.mOriginalValues = mProductArrayList;
+            this.mDisplayedValues = mProductArrayList;
+            inflater = LayoutInflater.from(context);
+        }
+
+        @Override
+        public int getCount() {
+            return mDisplayedValues.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        private class ViewHolder {
+            LinearLayout llContainer;
+            TextView nombreCurso, codigoCurso, carreraCurso;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            ViewHolder holder = null;
+
+            if (convertView == null) {
+
+                holder = new ViewHolder();
+                convertView = inflater.inflate(R.layout.curso_item, null);
+                holder.llContainer = (LinearLayout)convertView.findViewById(R.id.cursos_layout);
+                holder.nombreCurso = (TextView) convertView.findViewById(R.id.nombreCurso);
+                holder.codigoCurso = (TextView) convertView.findViewById(R.id.codigoCurso);
+                holder.carreraCurso = (TextView) convertView.findViewById(R.id.carreraCurso);
+                convertView.setTag(holder);
+
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            holder.nombreCurso.setText("Asignatura: " + mDisplayedValues.get(position).getAsignatura_Carrera().getAsignatura().getNombre());
+            holder.codigoCurso.setText("Código de curso: " + mDisplayedValues.get(position).getId().toString());
+            holder.carreraCurso.setText("Carrera: " + mDisplayedValues.get(position).getAsignatura_Carrera().getCarrera().getNombre());
+
+            lvCursos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(InscripcionACurso.this, "ID SELECCIONADO: " + mDisplayedValues.get(Integer.parseInt(parent.getItemAtPosition(position).toString())).getId(), Toast.LENGTH_SHORT).show();
+                    Log.i("ListView", "Se ha presionado un elemento");
+                    dtCursoSeleccionado = mDisplayedValues.get(Integer.parseInt(parent.getItemAtPosition(position).toString()));
+                }
+            });
+
+            return convertView;
+        }
+
+        @Override
+        public Filter getFilter() {
+            Filter filter = new Filter() {
+
+                @SuppressWarnings("unchecked")
+                @Override
+                protected void publishResults(CharSequence constraint,FilterResults results) {
+
+                    mDisplayedValues = (ArrayList<DtCurso>) results.values; // tiene los valores filtrados
+                    notifyDataSetChanged();                                 // notifica los datos con los nuevos valores filtrados
+                }
+
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    FilterResults results = new FilterResults();                    // Almacena los resultados de la operacion de filtrado en values
+                    ArrayList<DtCurso> FilteredArrList = new ArrayList<DtCurso>();
+
+                    if (mOriginalValues == null) {
+                        mOriginalValues = new ArrayList<DtCurso>(mDisplayedValues); // almacena los valores originales de los datos en mOriginalValues
+                    }
+
+                    /********
+                     *
+                     *  Si la restriccion (CharSequence que se recibe) es null retornar los valores de mOriginalValues(Original)
+                     *  si no, realiza el filtrado y retorna FilteredArrList(Filtrado)
+                     *
+                     ********/
+                    if (constraint == null || constraint.length() == 0) {
+
+                        // establecer el resultado original para retornar
+                        results.count = mOriginalValues.size();
+                        results.values = mOriginalValues;
+                    } else {
+                        constraint = constraint.toString().toLowerCase();
+                        for (int i = 0; i < mOriginalValues.size(); i++) {
+                            String data = mOriginalValues.get(i).getAsignatura_Carrera().getAsignatura().getNombre();
+                            if (data.toLowerCase().startsWith(constraint.toString())) {
+                                FilteredArrList.add(
+                                        new DtCurso(
+                                                mOriginalValues.get(i).getId(),
+                                                mOriginalValues.get(i).getFecha(),
+                                                mOriginalValues.get(i).getAsignatura_Carrera(),
+                                                mOriginalValues.get(i).getHorarios(),
+                                                mOriginalValues.get(i).getCalificacionesCursos(),
+                                                mOriginalValues.get(i).getInscriptos()
+                                        )
+                                );
+                            }
+                        }
+                        // establecer el resultado filtrado para retornar
+                        results.count = FilteredArrList.size();
+                        results.values = FilteredArrList;
+                    }
+                    return results;
+                }
+            };
+            return filter;
+        }
     }
 }

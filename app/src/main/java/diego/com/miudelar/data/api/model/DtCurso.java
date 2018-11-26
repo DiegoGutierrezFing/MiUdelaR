@@ -32,7 +32,16 @@ public class DtCurso implements Serializable {
         this.asignatura_Carrera = asignatura_Carrera;
         this.horarios = horarios;
     }
-    
+
+    public DtCurso(Long id, Date fecha, DtAsignatura_Carrera asignatura_Carrera, List<DtHorario> horarios, List<DtEstudiante_Curso> calificacionesCursos, List<DtUsuario> inscriptos) {
+        this.id = id;
+        this.fecha = fecha;
+        this.asignatura_Carrera = asignatura_Carrera;
+        this.horarios = horarios;
+        this.calificacionesCursos = calificacionesCursos;
+        this.inscriptos = inscriptos;
+    }
+
     public DtCurso(Date fecha, DtAsignatura_Carrera asignatura_Carrera) {
         this.fecha = fecha;
         this.asignatura_Carrera = asignatura_Carrera;
