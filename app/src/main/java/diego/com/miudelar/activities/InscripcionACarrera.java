@@ -28,6 +28,7 @@ import diego.com.miudelar.data.api.model.DtCarrera;
 import diego.com.miudelar.data.api.model.InscripcionCarreraBody;
 import diego.com.miudelar.data.prefs.SessionPrefs;
 import diego.com.miudelar.R;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -186,14 +187,15 @@ public class InscripcionACarrera extends AppCompatActivity {
                                         .findViewById(android.support.design.R.id.snackbar_text);
                                 snackTextView.setMaxLines(2);
                                 snackbar.show();*/
-                                mostrarDialogo(response.body().toString());
+                                Log.i("Mensaje ", response.body().toString());
+                                mostrarDialogo("El estudiante ya se encuentra inscripto a esta carrera");
 
                                 // Ir al menu principal (main activity)
                                 //irAMenuPrincipal();
                             }
 
                         } else {
-                            Log.i("response.body", response.body());
+                            //Log.i("response.body", response.body().string());
                             //Toast.makeText(InscripcionACarrera.this, "Error: respuesta del servidor vacia", Toast.LENGTH_SHORT).show();
                             mostrarDialogo("Error: respuesta del servidor vacia");
                             //irAMenuPrincipal();
@@ -201,7 +203,7 @@ public class InscripcionACarrera extends AppCompatActivity {
                     }
                     // Procesar errores
                     else {
-                        Log.i("response.body", response.body());
+                        //Log.i("response.body", response.body());
                         //Toast.makeText(InscripcionACarrera.this, "Error: no se ha podido recibir respuesta del servidor.", Toast.LENGTH_SHORT).show();
                         mostrarDialogo("Error: no se ha podido recibir respuesta del servidor.");
                         //irAMenuPrincipal();

@@ -219,7 +219,7 @@ public class InscripcionACurso extends AppCompatActivity {
                             }
                             else {
 
-                                mostrarDialogo(response.body().toString());
+                                mostrarDialogo("El estudiante ya se encuentra inscripto o no cumple con los requisitos de inscripción para este curso.");
                             }
 
                         } else {
