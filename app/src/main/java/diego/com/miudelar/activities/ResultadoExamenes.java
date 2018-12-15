@@ -172,8 +172,8 @@ public class ResultadoExamenes extends AppCompatActivity {
             TextView nombreCarrera = (TextView)row.findViewById(R.id.nombreCarrera);
             nombreCarrera.setText("Carrera: " + lista.get(position).getExamen().getAsignatura_Carrera().getCarrera().getNombre());
 
-            TextView fechaCurso = (TextView) row.findViewById(R.id.fechaExamen);
-            fechaCurso.setText("Fecha del examen: " + new SimpleDateFormat("dd/MM/yyyy").format(lista.get(position).getExamen().getFecha()));
+            TextView fechaExamen = (TextView) row.findViewById(R.id.fechaExamen);
+            fechaExamen.setText("Fecha del examen: " + new SimpleDateFormat("dd/MM/yyyy").format(lista.get(position).getExamen().getFecha()));
 
             TextView calificacion = (TextView) row.findViewById(R.id.calificacionExamen);
             calificacion.setText("Calificación: " + lista.get(position).getCalificacion().toString());
